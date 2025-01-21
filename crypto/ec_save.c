@@ -57,14 +57,3 @@ int ec_save(EC_KEY *key, char const *folder)
 	return (1);  /* Successfully saved keys */
 }
 
-#include <stdio.h>
-#include <stdint.h>
-
-void _print_hex_buffer(uint8_t const *buf, size_t len)
-{
-    for (size_t i = 0; i < len; i++)
-    {
-        printf("%02x", buf[i]);
-    }
-    printf("\n");
-}
