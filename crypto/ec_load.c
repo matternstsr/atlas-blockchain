@@ -35,7 +35,7 @@ EC_KEY *ec_load(char const *folder)
 		EC_KEY_free(key);
 		return NULL;
 	}
-	if (!PEM_read_ECPublicKey(pub_file, &key, NULL, NULL))
+	if (!PEM_read_RSAPublicKey(pub_file, &key, NULL, NULL))
 	{
 		fprintf(stderr, "Failed to load public key from %s\n", pub_key_path);
 		fclose(pub_file);
