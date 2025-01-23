@@ -9,6 +9,9 @@
 /* Define the length of the public key */
 #define EC_PUB_LEN 65
 #define EC_CURVE NID_secp256k1
+#define PUB_FILENAME "key_pub.pem"
+#define PRI_FILENAME "key.pem"
+
 
 /* Function declarations */
 
