@@ -25,8 +25,7 @@ EC_KEY *ec_load(char const *folder)
 
     /* Load the private key */
     snprintf(path, sizeof(path), "%s/%s", folder, PRI_FILENAME);
-    printf("Attempting to load private key from: %s\n", path);
-    fp = fopen(path, "r");
+/*     printf("Attempting to load private key from: %s\n", path); */    fp = fopen(path, "r");
     if (!fp)
     {
         perror("Failed to open private key file");
@@ -39,12 +38,10 @@ EC_KEY *ec_load(char const *folder)
         fprintf(stderr, "Failed to load private key from file\n");
         return (NULL);
     }
-    printf("Private key loaded successfully\n");
-
+/*     printf("Private key loaded successfully\n"); */
     /* Load the public key */
     snprintf(path, sizeof(path), "%s/%s", folder, PUB_FILENAME);
-    printf("Attempting to load public key from: %s\n", path);
-    fp = fopen(path, "r");
+/*     printf("Attempting to load public key from: %s\n", path); */    fp = fopen(path, "r");
     if (!fp)
     {
         perror("Failed to open public key file");
