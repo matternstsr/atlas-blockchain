@@ -1,0 +1,22 @@
+# Ignore all main*.c files (e.g., main1.c, main2.c, main123.c, etc.)
+main*.c
+
+# Ignore compiled object files
+*.o
+
+# Ignore executable files
+*.out
+*.exe
+
+# Ignore temporary files created by editors
+*.swp
+*.tmp
+*~
+
+# Ignore build directories
+/build/
+/bin/
+/obj/
+
+# Ignore log files
+*.log
