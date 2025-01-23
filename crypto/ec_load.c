@@ -24,16 +24,11 @@ EC_KEY *ec_load(char const *folder)
     snprintf(path, sizeof(path), "%s/key.pem", folder);
     fp = fopen(path, "r");
     if (!fp)
-    {
-        EC_KEY_free(key);
         return (NULL);
-    }
-    if (!PEM_read_ECPrivateKey(fp, &key, NULL, NULL))
-    {
-        fclose(fp);
-        EC_KEY_free(key);
+    key = PEM_read_ECPrivateKey(fp, NULL, NULL, NULL);
+    fclose(fp);
+    if (!key)
         return (NULL);
-    }
 
     /* Load the public key */
     snprintf(path, sizeof(path), "%s/key_pub.pem", folder);
