@@ -8,6 +8,7 @@
 
 /* Define the length of the public key */
 #define EC_PUB_LEN 65
+#define EC_CURVE NID_secp256k1
 
 /* Function declarations */
 
