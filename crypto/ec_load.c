@@ -34,7 +34,6 @@ EC_KEY *ec_load(char const *folder)
         EC_KEY_free(key);
         return (NULL);
     }
-    fclose(fp);
 
     /* Load the public key */
     snprintf(path, sizeof(path), "%s/key_pub.pem", folder);
