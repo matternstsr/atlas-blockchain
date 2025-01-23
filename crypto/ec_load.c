@@ -59,7 +59,6 @@ EC_KEY *ec_load(char const *folder)
         return (NULL);
     }
     fclose(fp);
-    printf("Public key loaded successfully\n");
-
+/*     printf("Public key loaded successfully\n"); */
     return (key);
 }
