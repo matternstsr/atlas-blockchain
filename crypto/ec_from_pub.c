@@ -1,3 +1,4 @@
+#include "hblk_crypto.h"
 
 /**
  * ec_from_pub - Creates an EC_KEY structure from a public key
