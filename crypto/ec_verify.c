@@ -10,7 +10,7 @@
 * Return: 1 if signature is valid, 0 otherwise
 */
 int ec_verify(EC_KEY const *key, uint8_t const *msg, size_t msglen,
-				sig_t const *sig);
+				sig_t const *sig)
 {
 	if (!key || !msg || !sig || !sig->sig || sig->len == 0)
 		return (0);
