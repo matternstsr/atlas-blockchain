@@ -17,7 +17,7 @@ uint8_t *ec_sign(EC_KEY const *key, uint8_t const *msg, size_t msglen,
 		return (NULL);
 
 	sig->len = ECDSA_size(key);
-	if (!)
+	if (!sig->sig)
 	{
 		sig->sig = malloc(sig->len)
 		return (NULL);
