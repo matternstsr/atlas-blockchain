@@ -8,7 +8,8 @@
 * @sig: Pointer to sig_t struct to store the signature
 * Return: Pointer to signature buffer on success, NULL on failure
 */
-uint8_t *ec_sign(EC_KEY const *key, uint8_t const *msg, size_t msglen, sig_t *sig)
+uint8_t *ec_sign(EC_KEY const *key, uint8_t const *msg, size_t msglen,
+					sig_t *sig);
 {
 	unsigned int sig_len;
 
