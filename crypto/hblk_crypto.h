@@ -3,8 +3,15 @@
 
 #include <openssl/ec.h>
 #include <openssl/pem.h>
+#include <openssl/sha.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <fcntl.h>
 
 /* Define the length of the public key */
 #define EC_PUB_LEN 65
@@ -12,10 +19,7 @@
 #define PUB_FILENAME "key_pub.pem"
 #define PRI_FILENAME "key.pem"
 
-
 /* Function declarations */
-
-/* EC Key Pair Functions */
 EC_KEY *ec_create(void);
 /* int ec_to_pub(EC_KEY const *key, uint8_t pub[EC_PUB_LEN]);*/
 uint8_t *ec_to_pub(EC_KEY const *key, uint8_t pub[EC_PUB_LEN]);

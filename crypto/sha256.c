@@ -1,5 +1,4 @@
 #include "hblk_crypto.h"
-#include <openssl/sha.h>
 
 /**
 * sha256 - Computes the hash of a sequence of bytes using SHA-256.

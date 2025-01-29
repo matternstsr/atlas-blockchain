@@ -1,8 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <openssl/ec.h>
-#include <openssl/pem.h>
 #include "hblk_crypto.h"
 
 /**

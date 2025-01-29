@@ -1,7 +1,4 @@
 #include "hblk_crypto.h"
-#include <sys/stat.h>
-#include <unistd.h>
-#include <fcntl.h>
 
 /**
 * ec_save - Saves an EC key pair to disk.
