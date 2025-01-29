@@ -1,6 +1,7 @@
 #include "hblk_crypto.h"
 
-uint8_t *ec_to_pub(EC_KEY const *key, uint8_t pub[EC_PUB_LEN]) {
+uint8_t *ec_to_pub(EC_KEY const *key, uint8_t pub[EC_PUB_LEN])
+{
 	const EC_GROUP *group;
 	const EC_POINT *point;
 	BN_CTX *ctx = NULL;
@@ -18,7 +19,8 @@ uint8_t *ec_to_pub(EC_KEY const *key, uint8_t pub[EC_PUB_LEN]) {
 		return (NULL);
 
 	if (EC_POINT_point2oct(group, point, POINT_CONVERSION_UNCOMPRESSED,
-						pub, EC_PUB_LEN, ctx) == 0) {
+						pub, EC_PUB_LEN, ctx) == 0)
+	{
 		BN_CTX_free(ctx);
 		return (NULL);
 	}
