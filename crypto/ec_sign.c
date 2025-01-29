@@ -21,13 +21,13 @@ uint8_t *ec_sign(EC_KEY const *key, uint8_t const *msg, size_t msglen,
 	{
 		sig->sig = malloc(sig->len);
 		if (!sig->sig)
-			return (NULL);  // Return NULL if malloc fails
-		memset(sig->sig, 0, sig->len);  // Clear the memory with correct size
+			return (NULL); /* Return NULL if malloc fails */
+		memset(sig->sig, 0, sig->len); /* Clear the memory with correct size */
 	}
 	if (!ECDSA_sign(0, msg, msglen, sig->sig, &sig_len, (EC_KEY *)key))
 	{
 		free(sig->sig);
-		sig->sig = NULL;  // Ensure we reset the pointer on failure
+		sig->sig = NULL; /* Ensure we reset the pointer on failure */
 		return (NULL);
 	}
 	sig->len = sig_len;
