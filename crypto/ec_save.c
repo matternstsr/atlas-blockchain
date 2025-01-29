@@ -30,28 +30,24 @@ int ec_save(EC_KEY *key, char const *folder)
 	/* Open the private key file for writing */
 	priv_file = fopen(priv_path, "w");
 	if (!priv_file)
-		return (0);
-	/* Write the private key to the file */
+		return (0); /* Write the private key to the file */
 	if (!PEM_write_ECPrivateKey(priv_file, key, NULL, NULL, 0, NULL, NULL))
 	{
 		fclose(priv_file);
 		return (0);
-	}
-	/* Open the public key file for writing */
+	}/* Open the public key file for writing */
 	pub_file = fopen(pub_path, "w");
 	if (!pub_file)
 	{
 		fclose(priv_file);
 		return (0);
-	}
-	/* Write the public key to the file */
+	}/* Write the public key to the file */
 	if (!PEM_write_EC_PUBKEY(pub_file, key))
 	{
 		fclose(priv_file);
 		fclose(pub_file);
 		return (0);
-	}
-	/* Cleanup */
+	}/* Cleanup */
 	fclose(priv_file);
 	fclose(pub_file);
 	return (1);  /* Successfully saved keys */
