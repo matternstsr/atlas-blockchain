@@ -35,19 +35,19 @@ int ec_save(EC_KEY *key, char const *folder)
 	{
 		fclose(priv_file);
 		return (0);
-	}/* Open the public key file for writing */
+	} /* Open the public key file for writing */
 	pub_file = fopen(pub_path, "w");
 	if (!pub_file)
 	{
 		fclose(priv_file);
 		return (0);
-	}/* Write the public key to the file */
+	} /* Write the public key to the file */
 	if (!PEM_write_EC_PUBKEY(pub_file, key))
 	{
 		fclose(priv_file);
 		fclose(pub_file);
 		return (0);
-	}/* Cleanup */
+	} /* Cleanup */
 	fclose(priv_file);
 	fclose(pub_file);
 	return (1);  /* Successfully saved keys */
