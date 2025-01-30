@@ -1,7 +1,5 @@
 #include "hblk_crypto.h"
 
-#define bzero(ptr, size) memset(ptr, 0, size)
-
 /**
 * ec_verify - Verifies the signature of a given message
 * @key: Pointer to the EC_KEY structure containing the public key
