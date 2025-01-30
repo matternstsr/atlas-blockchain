@@ -16,14 +16,6 @@ uint8_t *ec_sign(EC_KEY const *key, uint8_t const *msg, size_t msglen,
 	if (!key || !msg || !sig)
 		return (NULL);
 
-	sig->len = ECDSA_size(key);
-	if (!sig->sig)
-	{
-		sig->sig = malloc(sig->len);
-		if (!sig->sig)
-			return (NULL); /* Return NULL if malloc fails */
-		memset(sig->sig, 0, sig->len); /* Clear the memory with correct size */
-	}
 	if (!ECDSA_sign(0, msg, msglen, sig->sig, &sig_len, (EC_KEY *)key))
 	{
 		free(sig->sig);
