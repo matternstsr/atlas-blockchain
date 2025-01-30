@@ -6,11 +6,10 @@
 * @msg: Pointer to the message to verify
 * @msglen: Length of the message
 * @sig: Pointer to sig_t struct containing the signature
-*
 * Return: 1 if signature is valid, 0 otherwise
 */
 int ec_verify(EC_KEY const *key, uint8_t const *msg, size_t msglen,
-			  sig_t const *sig)
+			sig_t const *sig)
 {
 	if (!key || !msg || !sig || !sig->len)
 		return (0);
