@@ -23,6 +23,11 @@
 
 #define MAX_SIG_LEN 72
 
+/**
+* struct sig_s - Structure for representing an ECDSA signature
+* @sig: Fixed-size array holding the signature data
+* @len: Length of the signature (actual length of data in @sig)
+*/
 typedef struct sig_s
 {
 	uint8_t sig[MAX_SIG_LEN];
