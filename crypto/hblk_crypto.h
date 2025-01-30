@@ -21,15 +21,12 @@
 #define bzero(ptr, size) memset(ptr, 0, size)
 
 
-/**
-* struct sig_s - Signature structure
-* @sig: Pointer to the signature buffer
-* @len: Length of the signature
-*/
+#define MAX_SIG_LEN 72
+
 typedef struct sig_s
 {
-	uint8_t *sig;
-	uint8_t len;
+    uint8_t sig[MAX_SIG_LEN];
+    size_t len;
 } sig_t;
 
 /* Function declarations */
