@@ -18,6 +18,8 @@
 #define EC_CURVE NID_secp256k1
 #define PUB_FILENAME "key_pub.pem"
 #define PRI_FILENAME "key.pem"
+#define bzero(ptr, size) memset(ptr, 0, size)
+
 
 /**
 * struct sig_s - Signature structure
