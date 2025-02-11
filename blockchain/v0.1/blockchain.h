@@ -8,6 +8,8 @@
 #include <time.h>
 #include <stdio.h>
 #include <openssl/sha.h>
+#include "llist.h"
+
 
 /* Constants */
 #define BLOCKCHAIN_DATA_MAX 1024  /* Maximum allowed data size for a block */
@@ -45,6 +47,20 @@ typedef struct blockchain {
 	block_t *genesis;       /* Genesis block */
 	llist_t *chain;         /* List of blocks in the chain */
 } blockchain_t;
+
+typedef struct block {
+    uint32_t index;          // Block index
+    uint32_t difficulty;     // Difficulty of the block
+    uint64_t timestamp;      // Timestamp of the block
+    uint32_t nonce;          // Nonce for proof of work
+    uint8_t prev_hash[HASH_SIZE]; // Previous block hash
+    struct {
+        uint8_t buffer[BLOCKCHAIN_DATA_MAX]; // Block data
+        size_t len;                          // Length of data
+    } data;
+    uint8_t hash[HASH_SIZE];  // Block hash
+} block_t;
+
 
 /* Functions for blockchain operations */
 blockchain_t *blockchain_create(void);           /* Create a new blockchain */
