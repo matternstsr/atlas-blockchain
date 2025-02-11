@@ -12,6 +12,7 @@
 #include <time.h>
 #include <stdio.h>
 
+#define CHECK_FREAD(file, buf, size) (fread(buf, 1, size, file) != size)
 #define BLOCKCHAIN_MAGIC 0x48424c4b   /* Magic number for blockchain */
 #define BLOCKCHAIN_DATA_MAX 1024
 #define VERS "\x30\x2e\x31"              /* Version of the blockchain */
