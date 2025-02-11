@@ -47,24 +47,11 @@ blockchain_t *blockchain_deserialize(char const *path)
 	if (!file)
 		return (NULL);
 	/* Read header and block count */
-	if (read_block_header(file, &block_count) != 0)
-	{
-		fclose(file);
-		return (NULL);
-	}
+	if (read_block_header(file, &block_count) != 0) {fclose(file); return NULL;}
 	blockchain = calloc(1, sizeof(blockchain_t));
-	if (!blockchain)
-	{
-		fclose(file);
-		return (NULL);
-	}
+	if (!blockchain) {fclose(file); return NULL;}
 	blockchain->chain = llist_create(MT_SUPPORT_FALSE);
-	if (!blockchain->chain)
-	{
-		free(blockchain);
-		fclose(file);
-		return (NULL);
-	}
+	if (!blockchain->chain) {free(blockchain); fclose(file); return NULL;}
 	for (uint32_t i = 0; i < block_count; i++)
 	{
 		new_block = calloc(1, sizeof(block_t));
@@ -74,8 +61,7 @@ blockchain_t *blockchain_deserialize(char const *path)
 			CHECK_FREAD(file, new_block->data.buffer, new_block->data.len) ||
 			CHECK_FREAD(file, new_block->hash, SHA256_DIGEST_LENGTH))
 		{
-			free(new_block);
-			cleanup_blockchain(blockchain, file);
+			free(new_block); cleanup_blockchain(blockchain, file);
 			return (NULL);
 		}
 		llist_add_node(blockchain->chain, new_block, ADD_NODE_REAR);
