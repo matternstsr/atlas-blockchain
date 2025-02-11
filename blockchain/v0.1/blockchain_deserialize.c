@@ -1,57 +1,47 @@
 #include "blockchain.h"
 
+#define CHECK_FREAD(fptr, buf, size) (fread(buf, 1, size, fptr) != size)
+#define CHECK_MEMCMP(buf, cmp, size) (memcmp(buf, cmp, size))
+
 /**
- * blockchain_deserialize - Deserializes a blockchain from a file
- * @path: Path to the file containing the serialized blockchain
- * Return: A pointer to the deserialized blockchain, or NULL on failure
+ * blockchain_deserialize - Loads a blockchain from file
+ * @path: file to read from
+ * Return: Pointer to chain or NULL
  */
 blockchain_t *blockchain_deserialize(char const *path)
 {
-	FILE *file;
-	blockchain_t *blockchain = NULL;
-	uint32_t version;
+	FILE *fptr = fopen(path, "r");
+	char header_buf[7] = {0};
+	uint8_t end;
+	uint32_t numblocks;
+	blockchain_t *blockchain;
 	block_t *block;
-	size_t read_size;
 
-	/* Open the file in binary mode */
-	file = fopen(path, "rb");
-	if (!file)
+	if (!fptr || CHECK_FREAD(fptr, header_buf, 7) || CHECK_MEMCMP(header_buf, FHEADER, 7) ||
+		CHECK_FREAD(fptr, &end, 1) || CHECK_FREAD(fptr, &numblocks, 4))
 		return (NULL);
-	/* Read the magic number */
-	uint32_t magic_number;
-	read_size = fread(&magic_number, sizeof(magic_number), 1, file);
-	/* Compare with the magic number */
-	if (read_size != 1 || magic_number != BLOCKCHAIN_MAGIC)
-	{
-		fclose(file);
-		return (NULL); /* Incorrect magic number */
-	}
-	/* Read the version number */
-	read_size = fread(&version, sizeof(version), 1, file);
-	if (read_size != 1 || version != 0x01)
-	{
-		fclose(file);
-		return (NULL); /* Version mismatch */
-	}
-	/* Create the blockchain */
-	blockchain = blockchain_create();
+	blockchain = calloc(1, sizeof(blockchain_t));
 	if (!blockchain)
 	{
-		fclose(file);
-		return (NULL); /* Memory allocation failure */
+		fclose(fptr);
+		return (NULL);
 	}
-	/* Deserialize blocks from file */
-	while ((block = block_deserialize(file)) != NULL)
+	blockchain->chain = llist_create(MT_SUPPORT_FALSE);
+	while (numblocks--)
 	{
-		if (!blockchain_add_block(blockchain, block))
+		block = calloc(1, sizeof(block_t));
+		if (!block || CHECK_FREAD(fptr, &block->info, sizeof(block_info_t)) ||
+			CHECK_FREAD(fptr, &(block->data.len), 4) || CHECK_FREAD(fptr, &block->data.buffer,
+			block->data.len) || CHECK_FREAD(fptr, &block->hash, SHA256_DIGEST_LENGTH))
 		{
-			block_destroy(block);
-			blockchain_destroy(blockchain);
-			fclose(file);
-			return (NULL); /* Failed to add block to the blockchain */
+			free(block);
+			llist_destroy(blockchain->chain, 1);
+			free(blockchain);
+			fclose(fptr);
+			return (NULL);
 		}
+		llist_add_node(blockchain->chain, block, ADD_NODE_REAR);
 	}
-	/* Close the file */
-	fclose(file);
-	return (blockchain); /* Return the deserialized blockchain */
+	fclose(fptr);
+	return (blockchain);
 }
