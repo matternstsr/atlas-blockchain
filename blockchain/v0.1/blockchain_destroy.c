@@ -7,6 +7,7 @@
 void blockchain_destroy(blockchain_t *blockchain)
 {
 	block_t *block;
+
 	if (blockchain) 
 	{
 		/* Free each block in the linked list */
