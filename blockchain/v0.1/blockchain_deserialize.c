@@ -10,7 +10,7 @@ int read_block_header(FILE *file, uint32_t *block_count)
 {
 	char header[7] = {0};
 	uint8_t header_check;
-	
+
 	if (CHECK_FREAD(file, header, sizeof(header)) ||
 		memcmp(header, FHEADER, sizeof(header)))
 		return (-1);
@@ -82,7 +82,8 @@ blockchain_t *blockchain_deserialize(char const *path)
  * @file: The file to close
  * Return: NULL (always)
  */
-void *close_file_and_return_null(FILE *file) {
+void *close_file_and_return_null(FILE *file)
+{
 	fclose(file);
-	return NULL;
+	return (NULL);
 }
