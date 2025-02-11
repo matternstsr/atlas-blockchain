@@ -6,7 +6,7 @@
  * @block_count: pointer to the block count variable
  * Return: 0 on success, -1 on failure
  */
-static int read_block_header(FILE *file, uint32_t *block_count)
+int read_block_header(FILE *file, uint32_t *block_count)
 {
 	char header[7] = {0};
 	uint8_t header_check;
@@ -23,7 +23,7 @@ static int read_block_header(FILE *file, uint32_t *block_count)
  * @blockchain: the blockchain to free
  * @file: file pointer to close after cleanup
  */
-static void cleanup_blockchain(blockchain_t *blockchain, FILE *file)
+void cleanup_blockchain(blockchain_t *blockchain, FILE *file)
 {
 	llist_destroy(blockchain->chain, 1, NULL);
 	free(blockchain);
