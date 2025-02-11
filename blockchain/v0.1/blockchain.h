@@ -48,7 +48,7 @@ typedef struct block {
         uint8_t buffer[BLOCKCHAIN_DATA_MAX]; /* Block data*/
         size_t len;                          /* Length of data*/
     } data;
-    uint8_t hash[HASH_SIZE];  /* Block hash*/
+    /* uint8_t hash[HASH_SIZE]; Block hash*/
 } block_t;
 
 /* Structure for the Blockchain */
