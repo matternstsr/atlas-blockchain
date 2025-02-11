@@ -48,14 +48,14 @@ blockchain_t *blockchain_deserialize(char const *path)
 		return (NULL);
 	/* Read header and block count */
 	if (read_block_header(file, &block_count) != 0)
-	close_file_and_return_null;
+	close_file_and_return_null(file);
 	blockchain = calloc(1, sizeof(blockchain_t));
 	if (!blockchain)
-	close_file_and_return_null;
+	close_file_and_return_null(file);
 	blockchain->chain = llist_create(MT_SUPPORT_FALSE);
 	if (!blockchain->chain)
 	{
-		close_file_and_return_null;
+		close_file_and_return_null(file);
 		return (NULL);
 	}
 	for (uint32_t i = 0; i < block_count; i++)
