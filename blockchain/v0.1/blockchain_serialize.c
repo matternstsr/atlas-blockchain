@@ -18,6 +18,7 @@ int blockchain_serialize(blockchain_t const *blockchain, char const *path)
     file = fopen(path, "wb");
     if (!file)
         return -1;
+
     /* Write the file header */
     fwrite("HBLK", 1, 4, file);  /* Magic number */
     fwrite("0.1", 1, 3, file);  /* Version "0.1" */
@@ -25,8 +26,9 @@ int blockchain_serialize(blockchain_t const *blockchain, char const *path)
     /* Write the number of blocks (in little-endian format) */
     block_count = llist_size(blockchain->chain);
     fwrite(&block_count, 4, 1, file);
-    /* Serialize each block */
+    /* Get the first block in the linked list */
     block = llist_get_head(blockchain->chain);
+    /* Serialize each block */
     for (i = 0; i < block_count; i++)
     {
         /* Write block index (little-endian) */
@@ -51,7 +53,7 @@ int blockchain_serialize(blockchain_t const *blockchain, char const *path)
         /* Write block hash (32 bytes) */
         fwrite(block->hash, 1, 32, file);
         /* Move to the next block */
-        block = block->next;
+        block = llist_get_next(block); /* This replaces block->next */
     }
     /* Close the file */
     fclose(file);
