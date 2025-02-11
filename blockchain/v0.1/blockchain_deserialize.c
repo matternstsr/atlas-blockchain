@@ -9,7 +9,6 @@ blockchain_t *blockchain_deserialize(char const *path)
 {
 	FILE *file;
 	blockchain_t *blockchain = NULL;
-	uint32_t BLOCKCHAIN_MAGIC;
 	uint32_t version;
 	block_t *block;
 	size_t read_size;
@@ -19,9 +18,10 @@ blockchain_t *blockchain_deserialize(char const *path)
 	if (!file)
 		return (NULL);
 	/* Read the magic number */
-	read_size = fread(&BLOCKCHAIN_MAGIC, sizeof(BLOCKCHAIN_MAGIC), 1, file);
-	if (read_size != 1 || memcmp(&BLOCKCHAIN_MAGIC, BLOCKCHAIN_MAGIC,
-		sizeof(BLOCKCHAIN_MAGIC) - 1) != 0)
+	uint32_t magic_number;
+	read_size = fread(&magic_number, sizeof(magic_number), 1, file);
+	/* Compare with the magic number */
+	if (read_size != 1 || magic_number != BLOCKCHAIN_MAGIC)
 	{
 		fclose(file);
 		return (NULL); /* Incorrect magic number */
