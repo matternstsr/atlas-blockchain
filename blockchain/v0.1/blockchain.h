@@ -17,9 +17,6 @@
 #define BLOCKCHAIN_DATA_MAX 1024
 #define VERS "\x30\x2e\x31"              /* Version of the blockchain */
 #define SHA256_DIGEST_LENGTH 32
-#define HOLBERTON_HASH \
-	"\xc5\x2c\x26\xc8\xb5\x46\x16\x39\x63\x5d\x8e\xdf\x2a\x97\xd4\x8d" \
-	"\x0c\x8e\x00\x09\xc8\x17\xf2\xb1\xd3\xd7\xff\x2f\x04\x51\x58\x03"
 #define FHEADER "\x48\x42\x4c\x4b\x30\x2e\x31"  /* Blockchain header */
 #define GENESIS_HASH 00000000000000000000000000000000  /* Genesis block hash */
 #define END ((_get_endianness() == 1) ? "\x01" : "\x02")  /* Endianness check */
@@ -91,5 +88,6 @@ uint8_t *block_hash(block_t const *block, uint8_t hash_buf[SHA256_DIGEST_LENGTH]
 /* Serialization functions */
 int serialize_block_to_file(llist_node_t node, unsigned int index, void *arg);
 static int read_block_header(FILE *file, uint32_t *block_count);
+static void cleanup_blockchain(blockchain_t *blockchain, FILE *file);
 
 #endif /* _BLOCKCHAIN_H_ */
