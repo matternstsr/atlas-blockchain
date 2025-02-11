@@ -14,18 +14,19 @@ blockchain_t *blockchain_deserialize(char const *path)
 	block_t *block;
 	size_t read_size;
 
-	/* Open the file */
+	/* Open the file in binary mode */
 	file = fopen(path, "rb");
 	if (!file)
 		return (NULL);
-	/* Read magic number */
+	/* Read the magic number */
 	read_size = fread(&magic_number, sizeof(magic_number), 1, file);
-	if (read_size != 1 || memcmp(&magic_number, MAGIC_NUMBER, sizeof(MAGIC_NUMBER) - 1) != 0)
+	if (read_size != 1 || memcmp(&magic_number, MAGIC_NUMBER,
+		sizeof(MAGIC_NUMBER) - 1) != 0)
 	{
 		fclose(file);
 		return (NULL); /* Incorrect magic number */
 	}
-	/* Read version */
+	/* Read the version number */
 	read_size = fread(&version, sizeof(version), 1, file);
 	if (read_size != 1 || version != 0x01)
 	{
@@ -39,7 +40,7 @@ blockchain_t *blockchain_deserialize(char const *path)
 		fclose(file);
 		return (NULL); /* Memory allocation failure */
 	}
-	/* Read and deserialize blocks */
+	/* Deserialize blocks from file */
 	while ((block = block_deserialize(file)) != NULL)
 	{
 		if (!blockchain_add_block(blockchain, block))
