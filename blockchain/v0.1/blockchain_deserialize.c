@@ -83,6 +83,6 @@ blockchain_t *blockchain_deserialize(char const *path)
  * Return: NULL (always)
  */
 void *close_file_and_return_null(FILE *file) {
-    fclose(file);
-    return NULL;
+	fclose(file);
+	return NULL;
 }
