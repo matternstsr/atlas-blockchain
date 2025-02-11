@@ -32,7 +32,7 @@ block_t *block_create(block_t const *prev,
 	info.difficulty = 0; /* Difficulty (could be used later) */
 	info.nonce = 0;/* Nonce (for proof of work) */
 	memcpy(info.prev_hash, prev->hash, SHA256_DIGEST_LENGTH);
-	 /* Copy the previous block's hash */
+	/* Copy the previous block's hash */
 	info.timestamp = time(NULL);  /* Current timestamp for block creation */
 
 	/* Initialize the hash to zero initially (to be computed later) */
