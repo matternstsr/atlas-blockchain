@@ -1,61 +1,70 @@
 #include "blockchain.h"
 
 /**
- * blockchain_serialize - Serializes a Blockchain to a file
- * @blockchain: pointer to the blockchain structure to be serialized
- * @path: path to the file where the blockchain will be saved
- *
- * Return: 0 on success, -1 on failure
+ * serialize_block_to_file - func to serialize a block and write it to a file
+ * @list: node to perform function on
+ * @index: unused
+ * @arg: filestream pointer
+ * Return: 0
+ */
+int serialize_block_to_file(llist_node_t list, unsigned int index, void *arg)
+{
+	block_t *tmp = NULL;
+	char block_buf[1116];   /* Buffer to hold the block data */
+	uint32_t len = 0;
+
+	(void)index;
+
+	/* Cast the list node to block_t* (block pointer) */
+	tmp = (block_t *)list;
+	if (!tmp)
+		return (0);   /* Handle NULL pointers gracefully */
+	/* Handle Endianness (If applicable) */
+	if (!strcmp(END, "\x02"))
+		SWAPENDIAN(tmp);   /* Apply endian swap if needed */
+	/* Get the block data length */
+	len = tmp->data.len;
+	/* Copy block metadata into the buffer */
+	memcpy(&block_buf[0], &tmp->info, sizeof(block_info_t));
+	/* Copy block data length into the buffer */
+	memcpy(&block_buf[56], &tmp->data.len, 4);
+	/* Copy actual block data into the buffer */
+	memcpy(&block_buf[60], tmp->data.buffer, len);
+	/* Copy the block's hash into the buffer */
+	memcpy(&block_buf[60 + len], tmp->hash, 32);
+	/* Write the buffer to the file */
+	fwrite(block_buf, 1, 92 + len, arg);
+	return (0);  /* Return 0 to indicate successful handling of the node */
+}
+
+/**
+ * blockchain_serialize - serializes a blockchain to file
+ * @blockchain: chain to serialize
+ * @path: file path to serialize to
+ * Return: 1 on success, 0 on fail
  */
 int blockchain_serialize(blockchain_t const *blockchain, char const *path)
 {
-    FILE *file;
-    block_t *block;
-    size_t i;
-    uint32_t block_count;
-    uint8_t endian = 1;  /* Little-endian */
+	FILE *fptr = NULL;
+	int blocknums = 0;
+	char header[12] = {FHEADER};   /* Header of the serialized file */
 
-    /* Open the file in write mode (overwrite if exists) */
-    file = fopen(path, "wb");
-    if (!file)
-        return -1;
-    /* Write the file header */
-    fwrite("HBLK", 1, 4, file);  /* Magic number */
-    fwrite("0.1", 1, 3, file);  /* Version "0.1" */
-    fwrite(&endian, 1, 1, file); /* Endianess (1 for little-endian) */
-    /* Write the number of blocks (in little-endian format) */
-    block_count = llist_size(blockchain->chain);
-    fwrite(&block_count, 4, 1, file);
-    /* Get the first block in the linked list */
-    block = llist_get_head(blockchain->chain);
-    /* Serialize each block */
-    for (i = 0; i < block_count; i++)
-    {
-        /* Write block index (little-endian) */
-        uint32_t index = block->info.index;
-        fwrite(&index, 4, 1, file);
-        /* Write block difficulty (little-endian) */
-        uint32_t difficulty = block->info.difficulty;
-        fwrite(&difficulty, 4, 1, file);
-        /* Write timestamp (little-endian) */
-        uint64_t timestamp = block->info.timestamp;
-        fwrite(&timestamp, 8, 1, file);
-        /* Write nonce (little-endian) */
-        uint64_t nonce = block->info.nonce;
-        fwrite(&nonce, 8, 1, file);
-        /* Write prev_hash (32 bytes) */
-        fwrite(block->info.prev_hash, 1, 32, file);
-        /* Write data length (little-endian) */
-        uint32_t data_len = block->data.len;
-        fwrite(&data_len, 4, 1, file);
-        /* Write block data */
-        fwrite(block->data.buffer, 1, block->data.len, file);
-        /* Write block hash (32 bytes) */
-        fwrite(block->hash, 1, 32, file);
-        /* Move to the next block */
-        block = llist_next(block); /* ?????? */
-    }
-    /* Close the file */
-    fclose(file);
-    return 0;
+	if (!blockchain || !path)
+		return (0);   /* Check if input parameters are valid */
+	/* Get the size of the blockchain (number of blocks) */
+	blocknums = llist_size(blockchain->chain);
+	/* Set the endianness flag and number of blocks in the header */
+	memcpy(&header[7], END, 1);   /* Set endianness flag */
+	memcpy(&header[8], &blocknums, 4);   /* Set the number of blocks */
+	/* Open the file for writing */
+	fptr = fopen(path, "w");
+	if (!fptr)
+		return (0);   /* Check if file opened successfully */
+	/* Write the header to the file */
+	fwrite(header, 1, 12, fptr);
+	/* Iterate through the blockchain and write each block */
+	llist_for_each(blockchain->chain, serialize_block_to_file, fptr);
+	/* Close the file after writing */
+	fclose(fptr);
+	return (1);   /* Indicate success */
 }

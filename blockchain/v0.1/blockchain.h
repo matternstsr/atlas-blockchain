@@ -12,6 +12,9 @@
 #include <time.h>
 #include <stdio.h>
 
+
+
+
 #define BLOCKCHAIN_DATA_MAX 1024
 #define MAGIC_NUMS "\x48\x42\x4c\x4b"
 #define VERS "\x30\x2e\x31"
@@ -22,6 +25,9 @@
 #define FHEADER "\x48\x42\x4c\x4b\x30\x2e\x31"
 #define GENESIS_HASH 00000000000000000000000000000000
 #define END ((_get_endianness() == 1) ? "\x01" : "\x02")
+
+
+
 
 
 /**
@@ -58,11 +64,6 @@ typedef struct block_data_s
  */
 typedef struct block_info_s
 {
-	/*
-		* The order of these fields should remain as is to ensure proper alignment.
-		* This structure is designed to be directly used as an array of characters
-		* in any architecture.
-		*/
 	uint32_t    index;
 	uint32_t    difficulty;
 	uint64_t    timestamp;
@@ -85,11 +86,16 @@ typedef struct block_s
 
 
 
+
+
+
+
 /**
  * blockchain_create - Initializes a new blockchain, starting with the Genesis block
  * Return: A pointer to the newly created blockchain, or NULL on failure
  */
 blockchain_t *blockchain_create(void);
+
 /**
  * block_create - Generates a new block, linking it to a previous one
  * @prev: The previous block to link to
@@ -99,16 +105,19 @@ blockchain_t *blockchain_create(void);
  */
 block_t *block_create(block_t const *prev,
 	int8_t const *data, uint32_t data_len);
+
 /**
  * block_destroy - Frees the memory used by a block
  * @block: The block to be deallocated
  */
 void block_destroy(block_t *block);
+
 /**
  * blockchain_destroy - Frees the memory used by the entire blockchain
  * @blockchain: The blockchain structure to be destroyed
  */
 void blockchain_destroy(blockchain_t *blockchain);
+
 /**
  * block_hash - Calculates the hash of a given block
  * @block: The block to hash
@@ -116,6 +125,7 @@ void blockchain_destroy(blockchain_t *blockchain);
  * Return: A pointer to the hash buffer containing the block's hash
  */
 uint8_t *block_hash(block_t const *block, uint8_t hash_buf[SHA256_DIGEST_LENGTH]);
+
 /**
  * blockchain_serialize - Saves the blockchain to a file
  * @blockchain: The blockchain to serialize
@@ -123,12 +133,14 @@ uint8_t *block_hash(block_t const *block, uint8_t hash_buf[SHA256_DIGEST_LENGTH]
  * Return: 0 on success, or -1 if an error occurred
  */
 int blockchain_serialize(blockchain_t const *blockchain, char const *path);
+
 /**
  * blockchain_deserialize - Loads a blockchain from a file
  * @path: The file path from which to load the blockchain
  * Return: A pointer to the deserialized blockchain, or NULL if an error occurred
  */
 blockchain_t *blockchain_deserialize(char const *path);
+
 /**
  * block_is_valid - Checks whether a given block is valid based on its predecessor
  * @block: The block to validate
@@ -136,4 +148,14 @@ blockchain_t *blockchain_deserialize(char const *path);
  * Return: 1 if the block is valid, or 0 if it's invalid
  */
 int block_is_valid(block_t const *block, block_t const *prev_block);
+
+/**
+ * serialize_block_to_file - Function to serialize a block and write it to a file
+ * @list: node to perform function on
+ * @index: unused
+ * @arg: filestream pointer
+ * Return: 0
+ */
+int serialize_block_to_file(llist_node_t list, unsigned int index, void *arg);
+
 #endif /* _BLOCKCHAIN_H_ */
