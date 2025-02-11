@@ -13,15 +13,15 @@ int blockchain_serialize(blockchain_t const *blockchain, char const *path)
     block_t *block;
     size_t i;
     uint32_t block_count;
-    uint8_t endian = 1;  /* Little-endian
+    uint8_t endian = 1;  /* Little-endian */
     /* Open the file in write mode (overwrite if exists) */
     file = fopen(path, "wb");
     if (!file)
         return -1;
     /* Write the file header */
-    fwrite("HBLK", 1, 4, file);  /* Magic number
-    fwrite("0.1", 1, 3, file);  /* Version "0.1"
-    fwrite(&endian, 1, 1, file);  /* Endianess (1 for little-endian)
+    fwrite("HBLK", 1, 4, file);  /* Magic number */
+    fwrite("0.1", 1, 3, file);  /* Version "0.1" */
+    fwrite(&endian, 1, 1, file); /* Endianess (1 for little-endian) */
     /* Write the number of blocks (in little-endian format) */
     block_count = llist_size(blockchain->chain);
     fwrite(&block_count, 4, 1, file);
