@@ -1,50 +1,44 @@
 #include "blockchain.h"
 
 /**
- * blockchain_create - creates a new blockchain with the Genesis Block
- * Return: A pointer to the created blockchain structure or NULL on failure
+ * block_create - Creates a new block
+ * @prev: Previous block
+ * @data: data to duplicate into block
+ * @data_len: Number of bytes to copy
+ * Return: Pointer to new block or NULL
  */
-blockchain_t *blockchain_create(void)
+block_t *block_create(block_t const *prev, int8_t const *data, uint32_t data_len)
 {
-	blockchain_t *blockchain = NULL;
-	block_t *genesis_block = NULL;
+    block_t *new_block = NULL;
+    block_info_t info;
+    block_data_t new_data = {{0}, 0};
+    uint32_t len = data_len;
 
-	/* Allocate memory for the blockchain */
-	blockchain = malloc(sizeof(blockchain_t));
-	if (!blockchain)
-		return (NULL);
+    new_block = malloc(sizeof(block_t));
+    if (!new_block)
+        return (NULL);
 
-	/* Initialize the blockchain */
-	blockchain->chain = llist_create(0); /* Pass flags as needed */
-	
-	/* Allocate and initialize the Genesis Block */
-	genesis_block = malloc(sizeof(block_t));
-	if (!genesis_block)
-	{
-		free(blockchain);
-		return (NULL);
-	}
+    /* Ensure data length doesn't exceed max */
+    if (data_len > BLOCKCHAIN_DATA_MAX)
+        len = BLOCKCHAIN_DATA_MAX;
 
-	/* Set the Genesis Block data */
-	genesis_block->index = 0;
-	genesis_block->difficulty = 0;
-	genesis_block->timestamp = 1537578000;
-	genesis_block->nonce = 0;
-	memset(genesis_block->info.prev_block_hash, 0, sizeof(genesis_block->info.prev_block_hash));
-	strncpy((char *)genesis_block->data_info.buffer, "Holberton School", sizeof(genesis_block->data_info.buffer));
-	genesis_block->data_info.len = 16;
+    /* Copy the data into the new block's buffer */
+    memcpy(new_data.buffer, data, len);
+    new_data.len = len;
 
-	/* The hash is predefined in the prompt */
-	unsigned char predefined_hash[] = {
-		0xc5, 0x2c, 0x26, 0xc8, 0xb5, 0x46, 0x16, 0x39,
-		0x63, 0x5d, 0x8e, 0xdf, 0x2a, 0x97, 0xd4, 0x8d,
-		0x0c, 0x8e, 0x00, 0x09, 0xc8, 0x17, 0xf2, 0xb1,
-		0xd3, 0xd7, 0xff, 0x2f, 0x04, 0x51, 0x58, 0x03
-	};
-	memcpy(genesis_block->hash, predefined_hash, sizeof(genesis_block->hash));
+    /* Set up the block information (index, timestamp, prev_hash) */
+    info.index = prev->info.index + 1;          /* Next block index */
+    info.difficulty = 0;                         /* Difficulty (could be used later) */
+    info.nonce = 0;                              /* Nonce (for proof of work) */
+    memcpy(info.prev_hash, prev->hash, SHA256_DIGEST_LENGTH); /* Copy the previous block's hash */
+    info.timestamp = time(NULL);                 /* Current timestamp for block creation */
 
-	/* Add the Genesis Block to the blockchain */
-	llist_add_node(blockchain->chain, genesis_block, ADD_NODE_FRONT); /* Assuming a linked list add function */
+    /* Initialize the hash to zero initially (to be computed later) */
+    memset(new_block->hash, 0, SHA256_DIGEST_LENGTH);
 
-	return (blockchain);
+    /* Set the new block's data and info */
+    new_block->data = new_data;
+    new_block->info = info;
+
+    return (new_block);
 }
