@@ -1,3 +1,5 @@
+#include "blockchain.h"
+
 /**
  * block_destroy - Destroys a block and frees its memory
  * @block: The block to destroy
