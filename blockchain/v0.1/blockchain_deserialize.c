@@ -33,7 +33,7 @@ void cleanup_blockchain(blockchain_t *blockchain, FILE *file)
 }
 
 /**
- * deserialize_blockchain - Loads a blockchain from a file
+ * blockchain_deserialize - Loads a blockchain from a file
  * @path: file to read from
  * Return: Pointer to the blockchain or NULL if an error occurs
  */
