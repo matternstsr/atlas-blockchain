@@ -92,5 +92,5 @@ uint8_t *block_hash(block_t const *block, uint8_t hash_buf[SHA256_DIGEST_LENGTH]
 int serialize_block_to_file(llist_node_t node, unsigned int index, void *arg);
 int read_block_header(FILE *file, uint32_t *block_count);
 void cleanup_blockchain(blockchain_t *blockchain, FILE *file);
-
+void *close_file_and_return_null(FILE *file);
 #endif /* _BLOCKCHAIN_H_ */
