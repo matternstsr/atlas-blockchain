@@ -13,7 +13,7 @@ int blockchain_serialize(blockchain_t const *blockchain, char const *path)
     block_t *block;
     size_t i;
     uint32_t block_count;
-    uint8_t endian = 1;  /* Little-endian *
+    uint8_t endian = 1;  /* Little-endian */
 
     /* Open the file in write mode (overwrite if exists) */
     file = fopen(path, "wb");
