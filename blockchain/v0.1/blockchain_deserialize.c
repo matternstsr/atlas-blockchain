@@ -35,7 +35,7 @@ void cleanup_blockchain(blockchain_t *blockchain, FILE *file)
  * @path: file to read from
  * Return: Pointer to the blockchain or NULL if an error occurs
  */
-blockchain_t *blockchain_deserialize(char const *path);
+blockchain_t *blockchain_deserialize(char const *path)
 {
 	FILE *file = fopen(path, "r");
 	blockchain_t *blockchain = NULL;
