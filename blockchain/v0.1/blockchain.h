@@ -10,7 +10,6 @@
 #include <openssl/sha.h>
 #include "llist.h"
 
-
 /* Constants */
 #define BLOCKCHAIN_DATA_MAX 1024  /* Maximum allowed data size for a block */
 #define HBLK_MAGIC_NUMBER 0x48424c4b  /* Magic number for HBLK format */
@@ -36,19 +35,19 @@ typedef struct block_info {
 /* Structure for storing the Block data */
 typedef struct block {
 	block_info_t info;      /* Block info */
-	uint8_t *data;          /* Block data */
+	uint8_t *data;          /* Block data pointer */
 	size_t data_len;        /* Length of data */
 	uint8_t hash[32];       /* Hash of the block */
 	uint32_t index;          /* Block index*/
 	uint32_t difficulty;     /* Difficulty of the block*/
 	uint64_t timestamp;      /* Timestamp of the block*/
 	uint32_t nonce;          /* Nonce for proof of work*/
-	/* uint8_t prev_hash[HASH_SIZE]; Previous block hash */
+	
 	struct {
 		uint8_t buffer[BLOCKCHAIN_DATA_MAX]; /* Block data*/
 		size_t len;                          /* Length of data*/
-	} data;
-	/* uint8_t hash[HASH_SIZE]; Block hash*/
+	} data_info; /* Renamed from 'data' to 'data_info' to avoid conflict with block's 'data' field */
+	
 } block_t;
 
 /* Structure for the Blockchain */
