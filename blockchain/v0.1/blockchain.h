@@ -20,6 +20,9 @@
 #define FHEADER "\x48\x42\x4c\x4b\x30\x2e\x31"  /* Blockchain header */
 #define GENESIS_HASH 00000000000000000000000000000000  /* Genesis block hash */
 #define END ((_get_endianness() == 1) ? "\x01" : "\x02")  /* Endianness check */
+#define HOLBERTON_HASH \
+"\xc5\x2c\x26\xc8\xb5\x46\x16\x39\x63\x5d\x8e\xdf\x2a\x97\xd4\x8d" \
+"\x0c\x8e\x00\x09\xc8\x17\xf2\xb1\xd3\xd7\xff\x2f\x04\x51\x58\x03"
 
 /**
  * struct blockchain_s - Represents the blockchain structure
