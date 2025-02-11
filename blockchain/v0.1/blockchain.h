@@ -13,7 +13,7 @@
 #include <stdio.h>
 
 #define BLOCKCHAIN_DATA_MAX 1024
-#define MAGIC_NUMS "\x48\x42\x4c\x4b"   /* Magic number for blockchain */
+#define BLOCKCHAIN_MAGIC "\x48\x42\x4c\x4b"   /* Magic number for blockchain */
 #define VERS "\x30\x2e\x31"              /* Version of the blockchain */
 #define SHA256_DIGEST_LENGTH 32
 #define HOLBERTON_HASH \
