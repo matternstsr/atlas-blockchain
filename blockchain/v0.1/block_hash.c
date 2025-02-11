@@ -13,7 +13,7 @@ uint8_t *block_hash(block_t const *block,
 		return (NULL);
 	/* Serialize the block: info + data */
 	unsigned char data[sizeof(block->info) + block->data.len];
-	size_t data_len = 0;
+	size_t data_len = 0; /********** ask about this ***********/
 	/* Copy block's info */
 	memcpy(data + data_len, &block->info, sizeof(block->info));
 	data_len += sizeof(block->info);
@@ -21,6 +21,6 @@ uint8_t *block_hash(block_t const *block,
 	memcpy(data + data_len, block->data.buffer, block->data.len);
 	data_len += block->data.len;
 	/* Hash the serialized data */
-	SHA256(data, data_len, hash_buf);
+	SHA256(data, data_len, hash_buf); /********** ask about this ***********/
 	return (hash_buf);
 }
