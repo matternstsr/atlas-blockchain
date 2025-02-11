@@ -33,13 +33,6 @@ typedef struct block_info {
 	uint8_t hash[32];        /* Current block hash */
 } block_info_t;
 
-/* Structure for the Blockchain */
-typedef struct blockchain {
-	size_t size;            /* Number of blocks in the blockchain */
-	block_t *genesis;       /* Genesis block */
-	llist_t *chain;         /* List of blocks in the chain */
-} blockchain_t;
-
 /* Structure for storing the Block data */
 typedef struct block {
 	block_info_t info;      /* Block info */
@@ -58,6 +51,12 @@ typedef struct block {
     uint8_t hash[HASH_SIZE];  // Block hash
 } block_t;
 
+/* Structure for the Blockchain */
+typedef struct blockchain {
+	size_t size;            /* Number of blocks in the blockchain */
+	block_t *genesis;       /* Genesis block */
+	llist_t *chain;         /* List of blocks in the chain */
+} blockchain_t;
 
 /* Functions for blockchain operations */
 blockchain_t *blockchain_create(void);           /* Create a new blockchain */
