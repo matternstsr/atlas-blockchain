@@ -23,7 +23,6 @@
 #define GENESIS_HASH 00000000000000000000000000000000
 #define END ((_get_endianness() == 1) ? "\x01" : "\x02")
 
-/* Structs */
 
 /**
  * struct blockchain_s - Represents the blockchain structure
@@ -84,14 +83,13 @@ typedef struct block_s
 	uint8_t         hash[SHA256_DIGEST_LENGTH]; /* Block's unique hash */
 } block_t;
 
-/* Function Prototypes */
+
 
 /**
  * blockchain_create - Initializes a new blockchain, starting with the Genesis block
  * Return: A pointer to the newly created blockchain, or NULL on failure
  */
 blockchain_t *blockchain_create(void);
-
 /**
  * block_create - Generates a new block, linking it to a previous one
  * @prev: The previous block to link to
@@ -99,20 +97,18 @@ blockchain_t *blockchain_create(void);
  * @data_len: The size of the data to copy into the block
  * Return: A pointer to the newly created block, or NULL on failure
  */
-block_t *block_create(block_t const *prev, int8_t const *data, uint32_t data_len);
-
+block_t *block_create(block_t const *prev,
+	int8_t const *data, uint32_t data_len);
 /**
  * block_destroy - Frees the memory used by a block
  * @block: The block to be deallocated
  */
 void block_destroy(block_t *block);
-
 /**
  * blockchain_destroy - Frees the memory used by the entire blockchain
  * @blockchain: The blockchain structure to be destroyed
  */
 void blockchain_destroy(blockchain_t *blockchain);
-
 /**
  * block_hash - Calculates the hash of a given block
  * @block: The block to hash
@@ -120,7 +116,6 @@ void blockchain_destroy(blockchain_t *blockchain);
  * Return: A pointer to the hash buffer containing the block's hash
  */
 uint8_t *block_hash(block_t const *block, uint8_t hash_buf[SHA256_DIGEST_LENGTH]);
-
 /**
  * blockchain_serialize - Saves the blockchain to a file
  * @blockchain: The blockchain to serialize
@@ -128,14 +123,12 @@ uint8_t *block_hash(block_t const *block, uint8_t hash_buf[SHA256_DIGEST_LENGTH]
  * Return: 0 on success, or -1 if an error occurred
  */
 int blockchain_serialize(blockchain_t const *blockchain, char const *path);
-
 /**
  * blockchain_deserialize - Loads a blockchain from a file
  * @path: The file path from which to load the blockchain
  * Return: A pointer to the deserialized blockchain, or NULL if an error occurred
  */
 blockchain_t *blockchain_deserialize(char const *path);
-
 /**
  * block_is_valid - Checks whether a given block is valid based on its predecessor
  * @block: The block to validate
@@ -143,5 +136,4 @@ blockchain_t *blockchain_deserialize(char const *path);
  * Return: 1 if the block is valid, or 0 if it's invalid
  */
 int block_is_valid(block_t const *block, block_t const *prev_block);
-
 #endif /* _BLOCKCHAIN_H_ */
