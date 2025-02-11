@@ -1,3 +1,5 @@
+#include "blockchain.h"
+
 /**
  * read_block_header - Reads the header and metadata from the file
  * @file: pointer to the file to read from
