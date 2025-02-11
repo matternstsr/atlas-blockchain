@@ -9,8 +9,8 @@
 uint8_t *block_hash(block_t const *block, uint8_t hash_buf[SHA256_DIGEST_LENGTH])
 {
 	unsigned char data[256];
-	/* Buffer to hold the serialized */
-	data size_t data_len = 0;
+	/* Buffer to hold the serialized data */
+	size_t data_len = 0;
 	/* Serialize the block's data into the 'data' buffer  */
 	memcpy(data + data_len, &block->info.index, sizeof(block->info.index));
 	data_len += sizeof(block->info.index);
