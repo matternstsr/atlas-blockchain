@@ -32,12 +32,12 @@ void cleanup_blockchain(blockchain_t *blockchain, FILE *file)
 
 /**
  * deserialize_blockchain - Loads a blockchain from a file
- * @file_path: file to read from
+ * @path: file to read from
  * Return: Pointer to the blockchain or NULL if an error occurs
  */
-blockchain_t *deserialize_blockchain(const char *file_path)
+blockchain_t *blockchain_deserialize(char const *path);
 {
-	FILE *file = fopen(file_path, "r");
+	FILE *file = fopen(path, "r");
 	blockchain_t *blockchain = NULL;
 	block_t *new_block = NULL;
 	uint32_t block_count;
