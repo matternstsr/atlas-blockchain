@@ -37,5 +37,5 @@ int block_is_valid(block_t const *block, block_t const *prev_block)
 		/* printf("Block invalid: Data exceeds max size\n"); */
 		return (1); /* Data size exceeds maximum allowed */
 	}
-	return (0);  /* Block is valid */
+	return (1);  /* Block is valid */
 }
