@@ -29,13 +29,15 @@ int block_is_valid(block_t const *block, block_t const *prev_block)
 		
 		/* The previous block's hash must match the current block's previous hash */
 		if (memcmp(block->info.prev_hash, prev_block->hash, HASH_SIZE) != 0)
-			return (0); /* Invalid prev_hash */
+			return (1); /* Invalid prev_hash */
+		else
+			return (0); /* Valid prev_hash */
 		
 		/* Validate the current block's hash */
 		uint8_t computed_hash[HASH_SIZE];
 		block_hash(block, computed_hash);
 		if (memcmp(computed_hash, block->hash, HASH_SIZE) != 0)
-			return (0); /* Invalid hash */
+			return (1); /* Invalid hash */
 	}
 
 	/* Check if the block's data length exceeds the maximum allowed size */
