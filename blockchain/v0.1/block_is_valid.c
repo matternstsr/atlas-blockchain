@@ -28,7 +28,7 @@ int block_is_valid(block_t const *block, block_t const *prev_block)
 		block_hash(block, computed_hash);
 		if (memcmp(computed_hash, block->hash, HASH_SIZE) != 0)
 		{ /* Added message for invalid hash */
-			printf("Block invalid: Hash mismatch\n");
+			/* printf("Block invalid: Hash mismatch\n"); */
 			return (1); /* Invalid hash */
 		}
 	}/* Check if the block's data length exceeds the maximum allowed size */
