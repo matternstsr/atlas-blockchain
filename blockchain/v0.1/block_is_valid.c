@@ -29,7 +29,7 @@ int block_is_valid(block_t const *block, block_t const *prev_block)
 		
 		/* The previous block's hash must match the current block's previous hash */
 		if (memcmp(block->info.prev_hash, prev_block->hash, HASH_SIZE) != 0)
-			return (1); /* Invalid prev_hash */
+			return (0); /* Invalid prev_hash */
 		
 		/* Validate the current block's hash */
 		uint8_t computed_hash[HASH_SIZE];
