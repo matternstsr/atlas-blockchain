@@ -34,7 +34,7 @@ int block_is_valid(block_t const *block, block_t const *prev_block)
 	}/* Check if the block's data length exceeds the maximum allowed size */
 	if (block->data.len > BLOCKCHAIN_DATA_MAX)
 	{ /* Added message for invalid data length */
-		printf("Block invalid: Data exceeds max size\n");
+		/* printf("Block invalid: Data exceeds max size\n"); */
 		return (1); /* Data size exceeds maximum allowed */
 	}
 	return (0);  /* Block is valid */
