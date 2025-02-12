@@ -16,7 +16,7 @@
 #define BLOCKCHAIN_MAGIC 0x48424c4b   /* Magic number for blockchain */
 #define BLOCKCHAIN_DATA_MAX 1024
 #define VERS "\x30\x2e\x31"              /* Version of the blockchain */
-#define SHA256_DIGEST_LENGTH 32
+#define HASH_SIZE SHA256_DIGEST_LENGTH  /* 32 */
 #define FHEADER "\x48\x42\x4c\x4b\x30\x2e\x31"  /* Blockchain header */
 #define GENESIS_HASH 00000000000000000000000000000000  /* Genesis block hash */
 #define END ((_get_endianness() == 1) ? "\x01" : "\x02")  /* Endianness check */
