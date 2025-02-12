@@ -21,20 +21,20 @@ int block_is_valid(block_t const *block, block_t const *prev_block)
 		/* The previous block's hash must match the current block's previous hash */
 		if (memcmp(block->info.prev_hash, prev_block->hash, HASH_SIZE) != 0)
 		{ /* Added message for invalid prev_hash */
-			/* printf("Block invalid: Prev_hash mismatch\n"); */
+			printf("Block invalid: Prev_hash mismatch\n");
 			return (1); /* Invalid prev_hash */
 		}/* Validate the current block's hash */
 		uint8_t computed_hash[HASH_SIZE];
 		block_hash(block, computed_hash);
 		if (memcmp(computed_hash, block->hash, HASH_SIZE) != 0)
 		{ /* Added message for invalid hash */
-			/* printf("Block invalid: Hash mismatch\n"); */
+			printf("Block invalid: Hash mismatch\n");
 			return (1); /* Invalid hash */
 		}
 	}/* Check if the block's data length exceeds the maximum allowed size */
 	if (block->data.len > BLOCKCHAIN_DATA_MAX)
 	{ /* Added message for invalid data length */
-		/* printf("Block invalid: Data exceeds max size\n"); */
+		printf("Block invalid: Data exceeds max size\n");
 		return (1); /* Data size exceeds maximum allowed */
 	}
 	return (0);  /* Block is valid */
