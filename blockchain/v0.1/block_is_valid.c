@@ -36,8 +36,6 @@ int block_is_valid(block_t const *block, block_t const *prev_block)
 		block_hash(block, computed_hash);
 		if (memcmp(computed_hash, block->hash, HASH_SIZE) != 0)
 			return (0); /* Invalid hash */
-		else
-			return (1); /* valid hash */
 	}
 
 	/* Check if the block's data length exceeds the maximum allowed size */
