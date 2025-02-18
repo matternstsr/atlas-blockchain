@@ -1,9 +1,5 @@
 #include "blockchain.h"
 
-/**
- * block_mine - Mines a Block to meet the difficulty
- * @block: Block to mine
- */
 void block_mine(block_t *block)
 {
 	uint8_t hash[SHA256_DIGEST_LENGTH];
@@ -20,3 +16,8 @@ void block_mine(block_t *block)
 	/* Store the final hash in the block */
 	memcpy(block->hash, hash, SHA256_DIGEST_LENGTH);
 }
+
+/**
+ * block_mine - Mines a Block to meet the difficulty
+ * @block: Block to mine
+ */
