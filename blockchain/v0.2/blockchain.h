@@ -87,7 +87,8 @@ block_t *block_create(block_t const *prev, int8_t const *data,
 block_t *block_deserialize(FILE *file);
 void block_destroy(block_t *block);
 int block_is_valid(block_t const *block, block_t const *prev_block);
-uint8_t *block_hash(block_t const *block, uint8_t hash_buf[SHA256_DIGEST_LENGTH]);
+uint8_t *block_hash(block_t const *block,
+					uint8_t hash_buf[SHA256_DIGEST_LENGTH]);
 
 /* Serialization functions */
 int serialize_block_to_file(llist_node_t node, unsigned int index, void *arg);

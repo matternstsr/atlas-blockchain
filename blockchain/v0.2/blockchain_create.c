@@ -4,6 +4,7 @@
  * blockchain_create - Creates a new blockchain
  * Return: Pointer to new chain or NULL
  */
+
 blockchain_t *blockchain_create(void)
 {
 	blockchain_t *chain = NULL; /* Changed name from new_chain */

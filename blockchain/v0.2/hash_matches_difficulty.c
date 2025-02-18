@@ -3,6 +3,13 @@
 
 #define SHA256_DIGEST_LENGTH 32  /* 256 bits = 32 bytes */
 
+/**
+ * hash_matches_difficulty - checks if the hash meets the specified difficulty
+ * @hash: the SHA256 hash to check
+ * @difficulty: the required number of leading zeros in the hash
+ * Return: 1 if hash meets or exceeds the difficulty, 0 otherwise
+ */
+
 int hash_matches_difficulty(uint8_t const hash[SHA256_DIGEST_LENGTH],
 							uint32_t difficulty)
 {
@@ -15,11 +22,11 @@ int hash_matches_difficulty(uint8_t const hash[SHA256_DIGEST_LENGTH],
 	{
 		/* Iterate through each bit in byte */
 		for (bit_index = 7; bit_index >= 0; bit_index--)
-		{  
+		{
 			/* Check if current bit is 0 */
 			if ((hash[byte_index] >> bit_index) & 1)
 				/* If bit is 1, stop counting leading zeros */
-				return (bit_count >= difficulty);  
+				return (bit_count >= difficulty);
 			/* If bit is 0, increment bit_count */
 			bit_count++;
 		}
