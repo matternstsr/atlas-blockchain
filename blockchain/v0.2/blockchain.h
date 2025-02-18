@@ -95,4 +95,11 @@ int read_block_header(FILE *file, uint32_t *block_count);
 void cleanup_blockchain(blockchain_t *blockchain, FILE *file);
 void *close_file_and_return_null(FILE *file);
 
+
+/*  Block mining Functions */
+int hash_matches_difficulty(uint8_t const hash[SHA256_DIGEST_LENGTH],
+	uint32_t difficulty);
+void block_mine(block_t *block);
+uint32_t blockchain_difficulty(blockchain_t const *blockchain);
+
 #endif /* _BLOCKCHAIN_H_ */
