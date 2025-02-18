@@ -31,7 +31,7 @@ blockchain_t *blockchain_create(void)
 	genesis_block->info = block_info;
 	genesis_block->data = block_data;
 	/* Assign predefined hash for the genesis block */
-	memcpy(genesis_block->hash, HOLBERTON_HASH, SHA256_LEN);
+	memcpy(genesis_block->hash, HOLBERTON_HASH, SHA256_DIGEST_LENGTH);
 	/* Add the genesis block to the chain */
 	if (llist_add_node(chain->chain, genesis_block, ADD_NODE_REAR) == -1)
 	{

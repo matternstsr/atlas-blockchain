@@ -65,7 +65,7 @@ blockchain_t *blockchain_deserialize(char const *path)
 			CHECK_FREAD(file, &new_block->info, sizeof(block_info_t)) ||
 			CHECK_FREAD(file, &new_block->data.len, sizeof(uint8_t) * 4) ||
 			CHECK_FREAD(file, new_block->data.buffer, new_block->data.len) ||
-			CHECK_FREAD(file, new_block->hash, SHA256_LEN))
+			CHECK_FREAD(file, new_block->hash, SHA256_DIGEST_LENGTH))
 		{
 			free(new_block);
 			cleanup_blockchain(blockchain, file);

@@ -6,7 +6,7 @@
  */
 void block_mine(block_t *block)
 {
-	uint8_t hash[SHA256_LEN];
+	uint8_t hash[SHA256_DIGEST_LENGTH];
 	uint32_t nonce = 0;  /* Nonce to mine the block */
 
 	/* Continue until we find a valid hash that matches the difficulty */
@@ -18,5 +18,5 @@ void block_mine(block_t *block)
 		nonce++;
 	} while (!hash_matches_difficulty(hash, block->info.difficulty));
 	/* Store the final hash in the block */
-	memcpy(block->hash, hash, SHA256_LEN);
+	memcpy(block->hash, hash, SHA256_DIGEST_LENGTH);
 }

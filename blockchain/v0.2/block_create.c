@@ -31,12 +31,12 @@ block_t *block_create(block_t const *prev,
 	info.index = prev->info.index + 1; /* Next block index */
 	info.difficulty = 0; /* Difficulty (could be used later) */
 	info.nonce = 0;/* Nonce (for proof of work) */
-	memcpy(info.prev_hash, prev->hash, SHA256_LEN);
+	memcpy(info.prev_hash, prev->hash, SHA256_DIGEST_LENGTH);
 	/* Copy the previous block's hash */
 	info.timestamp = time(NULL);  /* Current timestamp for block creation */
 
 	/* Initialize the hash to zero initially (to be computed later) */
-	memset(new_block->hash, 0, SHA256_LEN);
+	memset(new_block->hash, 0, SHA256_DIGEST_LENGTH);
 
 	/* Set the new block's data and info */
 	new_block->data = new_data;

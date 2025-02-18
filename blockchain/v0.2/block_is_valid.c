@@ -18,7 +18,7 @@ int block_is_valid(block_t const *block, block_t const *prev_block)
 		/* Check if genesis block's data matches expected values */
 		if (block->data.len != strlen("Holberton School") ||
 			memcmp(block->data.buffer, "Holberton School", block->data.len) != 0 ||
-			memcmp(block->hash, HOLBERTON_HASH, SHA256_LEN) != 0)
+			memcmp(block->hash, HOLBERTON_HASH, SHA256_DIGEST_LENGTH) != 0)
 			return (1);  /* Invalid genesis block */
 		return (0);  /* Valid genesis block */
 	}
@@ -26,7 +26,7 @@ int block_is_valid(block_t const *block, block_t const *prev_block)
 	if (block->info.index != prev_block->info.index + 1)
 		return (1);  /* Invalid index */
 	/* Validate previous block's hash */
-	if (memcmp(prev_block->hash, block->info.prev_hash, SHA256_LEN) != 0)
+	if (memcmp(prev_block->hash, block->info.prev_hash, SHA256_DIGEST_LENGTH) != 0)
 		return (1);  /* Invalid previous block hash reference */
 	/* Validate current block's hash directly */
 	if (block_hash(prev_block, NULL) != block->info.prev_hash)

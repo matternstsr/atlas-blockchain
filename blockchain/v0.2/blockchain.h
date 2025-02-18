@@ -16,7 +16,7 @@
 #define BLOCKCHAIN_MAGIC 0x48424c4b   /* Magic number for blockchain */
 #define BLOCKCHAIN_DATA_MAX 1024
 #define VERS "\x30\x2e\x31"              /* Version of the blockchain */
-#define HASH_SIZE SHA256_LEN  /* 32 */
+#define HASH_SIZE SHA256_DIGEST_LENGTH  /* 32 */
 #define FHEADER "\x48\x42\x4c\x4b\x30\x2e\x31"  /* Blockchain header */
 #define GENESIS_HASH 00000000000000000000000000000000  /* Genesis block hash */
 #define END ((_get_endianness() == 1) ? "\x01" : "\x02")  /* Endianness chck */
@@ -58,7 +58,7 @@ typedef struct block_info_s
 	uint32_t    difficulty;
 	uint64_t    timestamp;
 	uint64_t    nonce;
-	uint8_t     prev_hash[SHA256_LEN];
+	uint8_t     prev_hash[SHA256_DIGEST_LENGTH];
 } block_info_t;
 
 /**
@@ -71,7 +71,7 @@ typedef struct block_s
 {
 	block_info_t    info; /* Block's metadata (info) */
 	block_data_t    data; /* The block's actual data */
-	uint8_t         hash[SHA256_LEN]; /* Block's unique hash */
+	uint8_t         hash[SHA256_DIGEST_LENGTH]; /* Block's unique hash */
 } block_t;
 
 /* Blockchain operations */
@@ -87,7 +87,7 @@ block_t *block_create(block_t const *prev, int8_t const *data,
 block_t *block_deserialize(FILE *file);
 void block_destroy(block_t *block);
 int block_is_valid(block_t const *block, block_t const *prev_block);
-uint8_t *block_hash(block_t const *block, uint8_t hash_buf[SHA256_LEN]);
+uint8_t *block_hash(block_t const *block, uint8_t hash_buf[SHA256_DIGEST_LENGTH]);
 
 /* Serialization functions */
 int serialize_block_to_file(llist_node_t node, unsigned int index, void *arg);
