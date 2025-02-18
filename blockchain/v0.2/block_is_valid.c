@@ -10,9 +10,11 @@ int block_is_valid(block_t const *block, block_t const *prev_block)
 {
 	if (!block)
 		return (1);  /* Invalid block */
+
 	if (!prev_block && block->info.index != 0)
 		return (1);  /* Invalid if prev_block is NULL & block's index isn't 0 */
-	/* Validate Genesis Block directly within this function */
+
+	/* Validate Genesis Block directly */
 	if (block->info.index == 0)  /* Genesis block case */
 	{
 		/* Check if genesis block's data matches expected values */
@@ -22,23 +24,30 @@ int block_is_valid(block_t const *block, block_t const *prev_block)
 			return (1);  /* Invalid genesis block */
 		return (0);  /* Valid genesis block */
 	}
+
 	/* Check if block's index matches previous block's index + 1 */
 	if (block->info.index != prev_block->info.index + 1)
 		return (1);  /* Invalid index */
+
 	/* Validate previous block's hash */
-	if (memcmp(prev_block->hash, block->info.prev_hash, SHA256_DIGEST_LENGTH) != 0)
+	uint8_t prev_block_hash[SHA256_DIGEST_LENGTH];
+	block_hash(prev_block, prev_block_hash);  // Get previous block's hash
+	if (memcmp(prev_block_hash, block->info.prev_hash, SHA256_DIGEST_LENGTH) != 0)
 		return (1);  /* Invalid previous block hash reference */
-	/* Validate current block's hash directly */
-	if (block_hash(prev_block, NULL) != block->info.prev_hash)
-		return (1);  /* Invalid hash reference of previous block */
+
 	/* Validate current block's hash */
-	if (block_hash(block, NULL) != block->hash)
+	uint8_t current_block_hash[SHA256_DIGEST_LENGTH];
+	block_hash(block, current_block_hash);  // Get current block's hash
+	if (memcmp(current_block_hash, block->hash, SHA256_DIGEST_LENGTH) != 0)
 		return (1);  /* Invalid current block hash */
+
 	/* Validate block's data length */
 	if (block->data.len > BLOCKCHAIN_DATA_MAX)
 		return (1);  /* Invalid if data size exceeds max limit */
+
 	/* Validate block's hash difficulty */
-	if (!hash_matches_difficulty(block->hash, block->info.difficulty))
+	if (!hash_matches_difficulty(current_block_hash, block->info.difficulty))
 		return (1);  /* Invalid if hash doesn't meet the required difficulty */
+
 	return (0);  /* Block is valid */
 }
