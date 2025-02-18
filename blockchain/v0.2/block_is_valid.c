@@ -1,11 +1,5 @@
 #include "blockchain.h"
 
-/**
- * block_is_valid - function to validate a block - MODIFIED
- * @block: block to validate
- * @prev_block: block before block to validate
- * Return: 0 on Success, 1 on fail
- */
 int block_is_valid(block_t const *block, block_t const *prev_block)
 {
 	if (!block)
@@ -49,5 +43,12 @@ int block_is_valid(block_t const *block, block_t const *prev_block)
 	if (!hash_matches_difficulty(current_block_hash, block->info.difficulty))
 		return (1);  /* Invalid if hash doesn't meet the required difficulty */
 
-	return 0;  /* Block is valid */
+	return (0);  /* Block is valid */
 }
+
+/**
+ * block_is_valid - function to validate a block - MODIFIED
+ * @block: block to validate
+ * @prev_block: block before block to validate
+ * Return: 0 on Success, 1 on fail
+ */
