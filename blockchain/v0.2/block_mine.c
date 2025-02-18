@@ -1,23 +1,33 @@
-#include "blockchain.h"
+#include <stdint.h>
+#include <stdio.h>
+
+#define SHA256_DIGEST_LENGTH 32  /* 256 bits = 32 bytes */
 
 /**
- * block_mine - Mines a Block to meet the difficulty
- * @block: Block to mine
+ * hash_matches_difficulty - Checks if a given hash matches a given difficulty
+ * @hash: The hash to check
+ * @difficulty: The minimum difficulty (number of leading zero bits required)
+ *
+ * Return: 1 if the hash matches the difficulty, 0 otherwise
  */
-void block_mine(block_t *block)
+int hash_matches_difficulty(uint8_t const hash[SHA256_DIGEST_LENGTH], uint32_t difficulty)
 {
-    uint8_t hash[SHA256_DIGEST_LENGTH];
-    uint32_t nonce = 0;  /* Nonce to mine the block */
+    uint32_t bit_count = 0;
+    uint32_t byte_index, bit_index;
 
-    /* Continue until we find a valid hash that matches the difficulty */
-    do {
-        block->info.nonce = nonce;  /* Set the current nonce */
-        /* Calculate the hash of the block with the current nonce */
-        block_hash(block, hash);
-        /* Increment nonce for the next attempt */
-        nonce++;
-    } while (!hash_matches_difficulty(hash, block->info.difficulty));
-    
-    /* Store the final hash in the block */
-    memcpy(block->hash, hash, SHA256_DIGEST_LENGTH);
+    /* Iterate through each byte in the hash */
+    for (byte_index = 0; byte_index < SHA256_DIGEST_LENGTH; byte_index++)
+    {
+        /* Iterate through each bit in the byte */
+        for (bit_index = 7; bit_index >= 0; --bit_index)
+        {
+            /* Check if the current bit is 1 */
+            if ((hash[byte_index] >> bit_index) & 1)
+            {
+                return (bit_count >= difficulty);
+            }
+            bit_count++;
+        }
+    }
+    return (bit_count >= difficulty);
 }
