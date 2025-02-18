@@ -17,7 +17,6 @@ void block_mine(block_t *block)
 		/* Increment nonce for the next attempt */
 		nonce++;
 	} while (!hash_matches_difficulty(hash, block->info.difficulty));
-
 	/* Store the final hash in the block */
 	memcpy(block->hash, hash, SHA256_DIGEST_LENGTH);
 }
