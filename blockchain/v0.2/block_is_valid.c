@@ -20,18 +20,15 @@ int hash_matches_difficulty(uint8_t const hash[SHA256_DIGEST_LENGTH],
     for (byte_index = 0; byte_index < SHA256_DIGEST_LENGTH; byte_index++)
     {
         /* Iterate through each bit in the byte */
-        for (bit_index = 7; bit_index >= 0; bit_index--)
+        for (bit_index = 7; bit_index >= 0; --bit_index)
         {
-            /* Check if the current bit is 0 */
+            /* Check if the current bit is 1 */
             if ((hash[byte_index] >> bit_index) & 1)
             {
-                printf("Non-zero bit found at byte %u, bit %u\n", byte_index, bit_index);
-                printf("Total leading zero bits so far: %u\n", bit_count);
                 return (bit_count >= difficulty);
             }
             bit_count++;
         }
     }
-    printf("Total leading zero bits: %u\n", bit_count);
     return (bit_count >= difficulty);
 }
