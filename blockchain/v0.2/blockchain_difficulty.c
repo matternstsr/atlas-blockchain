@@ -26,17 +26,15 @@ uint32_t blockchain_difficulty(blockchain_t const *blockchain)
         /* Calculate the actual time difference between the blocks */
         act_time = block->info.timestamp - adj_block->info.timestamp;
         /* If the actual time is much greater than expected, decrease difficulty */
-        if (act_time > exp_time * 2)  /* Replace bitwise left shift with multiplication */
+        if (act_time > exp_time << 1)
             return (DIFF - 1); /* Decrease difficulty */
         /* If the actual time is much less than expected, increase difficulty */
-        else if (act_time < exp_time / 2)  /* Replace bitwise right shift with division */
+        else if (act_time < exp_time >> 1)
             return (DIFF + 1); /* Increase difficulty */
         /* If the actual time is within expected range, keep difficulty the same */
         else
             return (DIFF); /* Keep the same difficulty */
-    }
     else
-    {
         /* If no adjustment is needed, return the current difficulty */
         return (DIFF);
     }
