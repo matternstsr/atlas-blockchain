@@ -34,8 +34,8 @@ uint32_t blockchain_difficulty(blockchain_t const *blockchain)
         /* If the actual time is within expected range, keep difficulty the same */
         else
             return (DIFF); /* Keep the same difficulty */
+    }
     else
         /* If no adjustment is needed, return the current difficulty */
         return (DIFF);
-    }
 }
