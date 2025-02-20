@@ -6,7 +6,6 @@
  * Return: difficulty to be set for next block
  */
 
-
 uint32_t blockchain_difficulty(blockchain_t const *blockchain)
 {
 	block_t *block, *adj_block;
@@ -41,9 +40,6 @@ uint32_t blockchain_difficulty(blockchain_t const *blockchain)
 		else
 			return (DIFF); /* Keep the same difficulty */
 	}
-	else
-	{
-		/* If no adjustment is needed, return the current difficulty */
+	else /* If no adjustment is needed, return the current difficulty */
 		return (DIFF);
-	}
 }
