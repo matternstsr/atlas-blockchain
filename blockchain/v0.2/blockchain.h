@@ -14,7 +14,7 @@
 
 #define DIFF block->info.difficulty
 #define BLK_GEN_INT 1 /* BLOCK GENERATION INTERVAL 1 sec (adjust as nec) */
-#define  DIF_ADJ_INT 5 /* DIFFICULTY ADJUSTMENT INTERVAL 5 Every 5 blocks */
+#define DIF_ADJ_INT 5 /* DIFFICULTY ADJUSTMENT INTERVAL 5 Every 5 blocks */
 #define CHECK_FREAD(file, buf, size) (fread(buf, 1, size, file) != size)
 #define BLOCKCHAIN_MAGIC 0x48424c4b   /* Magic number for blockchain */
 #define BLOCKCHAIN_DATA_MAX 1024

@@ -13,7 +13,7 @@ uint32_t blockchain_difficulty(blockchain_t const *blockchain)
 	int idx = 0;
 
 	if (!blockchain)
-		return (0);  /* No blockchain or invalid input, return 0 */
+		return (0);  /* No blockchain or invalid input, return 0
 	
 	block = llist_get_tail(blockchain->chain);  /* Get the last block in the blockchain */
 	
@@ -23,17 +23,20 @@ uint32_t blockchain_difficulty(blockchain_t const *blockchain)
 		/* Get the block where the last difficulty adjustment occurred */
 		idx = (llist_size(blockchain->chain) - DIFF_ADJUSTMENT_INTERVAL);
 		adj_block = llist_get_node_at(blockchain->chain, idx);
+
 		/* Calculate expected time between blocks (this could be a fixed value or calculated based on previous blocks) */
 		exp_time = EXP(block, adj_block);
+
 		/* Calculate actual time between blocks */
 		act_time = ACT(block, adj_block);
+
 		/* Adjust difficulty based on the time difference */
-		if (act_time > exp_time << 1) /* If actual time is more than double the expected time */
-			return (DIFF - 1);  /* Decrease difficulty */
-		else if (act_time < exp_time >> 1) /* If actual time is less than half the expected time */
-			return (DIFF + 1); /* Increase difficulty */
+		if (act_time > exp_time << 1)  /* If actual time is more than double the expected time */
+			return (DIFF - 1);         /* Decrease difficulty */
+		else if (act_time < exp_time >> 1)  /* If actual time is less than half the expected time */
+			return (DIFF + 1);         /* Increase difficulty */
 		else
-			return (DIFF); * / Keep the same difficulty */
+			return (DIFF);             /* Keep the same difficulty */
 	}
 	else
 	{
