@@ -17,7 +17,6 @@ uint32_t blockchain_difficulty(blockchain_t const *blockchain)
 	/* Check if blockchain is NULL */
 	if (!blockchain)
 		return (0); /* Return 0 if blockchain is invalid */
-
 	/* Get last block in blockchain */
 	block = llist_get_tail(blockchain->chain);
 
