@@ -1,46 +1,49 @@
 #include "blockchain.h"
 
-/**
- * blockchain_difficulty - calculates difficulty to give next block
- * @blockchain: Blockchain to use
- * Return: Block Difficulty of next block
- */
 uint32_t blockchain_difficulty(blockchain_t const *blockchain)
 {
-	block_t *block, *adj_block;
-	uint32_t exp_time = 0;
-	uint64_t act_time = 0;
-	int idx = 0;
+    block_t *block, *adj_block;
+    uint32_t exp_time = 0;
+    uint64_t act_time = 0;
+    int idx = 0;
 
-	if (!blockchain)
-		return (0);  /* No blockchain or invalid input, return 0
-	
-	block = llist_get_tail(blockchain->chain);  /* Get the last block in the blockchain */
-	
-	/* Check if the block index is a multiple of DIFF_ADJUSTMENT_INTERVAL and it's not the genesis block */
-	if ((block->info.index % DIFF_ADJUSTMENT_INTERVAL == 0) && (block->info.index != 0))
-	{
-		/* Get the block where the last difficulty adjustment occurred */
-		idx = (llist_size(blockchain->chain) - DIFF_ADJUSTMENT_INTERVAL);
-		adj_block = llist_get_node_at(blockchain->chain, idx);
+    /* Check if blockchain is NULL */
+    if (!blockchain)
+        return (0); /* Return 0 if blockchain is invalid */
 
-		/* Calculate expected time between blocks (this could be a fixed value or calculated based on previous blocks) */
-		exp_time = EXP(block, adj_block);
+    /* Get the last block in the blockchain */
+    block = llist_get_tail(blockchain->chain);
 
-		/* Calculate actual time between blocks */
-		act_time = ACT(block, adj_block);
+    /* Check if the current block's index is divisible by the difficulty adjustment interval */
+    if ((block->info.index % DIFF_ADJUSTMENT_INTERVAL == 0) && block->info.index != 0)
+    {
+        /* Calculate the index of the block where the difficulty was last adjusted */
+        idx = (llist_size(blockchain->chain) - DIFF_ADJUSTMENT_INTERVAL);
+        
+        /* Get the block where difficulty was last adjusted */
+        adj_block = llist_get_node_at(blockchain->chain, idx);
 
-		/* Adjust difficulty based on the time difference */
-		if (act_time > exp_time << 1)  /* If actual time is more than double the expected time */
-			return (DIFF - 1);         /* Decrease difficulty */
-		else if (act_time < exp_time >> 1)  /* If actual time is less than half the expected time */
-			return (DIFF + 1);         /* Increase difficulty */
-		else
-			return (DIFF);             /* Keep the same difficulty */
-	}
-	else
-	{
-		/* If no adjustment is needed, return the current default difficulty */
-		return (DIFF);
-	}
+        /* Calculate expected time difference between blocks */
+        exp_time = (block->info.index - adj_block->info.index) * BLOCK_GENERATION_INTERVAL;
+
+        /* Calculate the actual time difference between the blocks */
+        act_time = block->info.timestamp - adj_block->info.timestamp;
+
+        /* If the actual time is much greater than expected, decrease difficulty */
+        if (act_time > exp_time << 1)
+            return (DIFF - 1); /* Decrease difficulty */
+
+        /* If the actual time is much less than expected, increase difficulty */
+        else if (act_time < exp_time >> 1)
+            return (DIFF + 1); /* Increase difficulty */
+
+        /* If the actual time is within expected range, keep difficulty the same */
+        else
+            return (DIFF); /* Keep the same difficulty */
+    }
+    else
+    {
+        /* If no adjustment is needed, return the current difficulty */
+        return (DIFF);
+    }
 }
