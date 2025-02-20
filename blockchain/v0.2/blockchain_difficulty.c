@@ -17,28 +17,24 @@ uint32_t blockchain_difficulty(blockchain_t const *blockchain)
 		return (0);  /* No difficulty to adjust or invalid blockchain */
 	/* Get last block in blockchain */
 	lst_blk = llist_get_tail(blockchain->chain);
-	if (lst_blk->info.index % DIF_ADJ_INT == 0 &&
-		lst_blk->info.index != 0) /* If last blk index is mult DIF_ADJ_INT */
-	{ /* & it's not genesis block, adjust difficulty */
-		/* Get block where difficulty was last adjusted */
-		adj_blk = llist_get_node_at(blockchain->chain,
-											lst_blk->info.index - DIF_ADJ_INT);
+	
+	if (lst_blk->info.index % DIF_ADJ_INT == 0 && lst_blk->info.index != 0) 
+	{ 
+		/* If last block index is multiple of DIF_ADJ_INT & it's not genesis block, adjust difficulty */
+		adj_blk = llist_get_node_at(blockchain->chain, lst_blk->info.index - DIF_ADJ_INT);
 		/* Calculate expected time between two blocks */
 		expected_time = DIF_ADJ_INT * BLK_GEN_INT;
 		/* Calculate actual time difference */
 		actual_time = lst_blk->info.timestamp - adj_blk->info.timestamp;
 		/* Adjust difficulty based on time difference */
-		if (actual_time > expected_time << 1)  /*  same actual_time > expected_time * 2 */
+		if (actual_time > expected_time << 1)  /* Equivalent to actual_time > expected_time * 2 */
 			difficulty = adj_blk->info.difficulty - 1; /* Decrease difficulty */
-		else if (actual_time < expected_time >> 1)  /* same actual_time < expected_time / 2 */
+		else if (actual_time < expected_time >> 1)  /* Equivalent to actual_time < expected_time / 2 */
 			difficulty = adj_blk->info.difficulty + 1; /* Increase difficulty */
 		else
 			difficulty = adj_blk->info.difficulty;  /* Keep same */
 	}
 	else
-	{
-		/* No adjustment, return current difficulty */
-		difficulty = lst_blk->info.difficulty;
-	}
+		difficulty = lst_blk->info.difficulty; /* No adjustment, return current difficulty */
 	return (difficulty);
 }
