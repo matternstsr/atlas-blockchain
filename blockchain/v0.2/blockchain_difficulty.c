@@ -1,5 +1,4 @@
 #include "blockchain.h"
-#define DIFF 0x1d00ffff
 
 /**
  * blockchain_difficulty - calculates difficulty to give next block
