@@ -7,7 +7,7 @@
  */
 
 
-uint32_t blockchain_diff(blockchain_t const *blockchain)
+uint32_t blockchain_difficulty(blockchain_t const *blockchain)
 {
 	block_t *block, *adj_block;
 	uint32_t exp_time = 0;
