@@ -28,10 +28,10 @@ uint32_t blockchain_difficulty(blockchain_t const *blockchain)
 		/* Calculate actual time difference */
 		actual_time = lst_blk->info.timestamp - adj_blk->info.timestamp;
 		/* Adjust difficulty based on time difference */
-		if (actual_time < expected_time / 2)
-			difficulty = adj_blk->info.difficulty + 1; /* Increase difficulty */
-		else if (actual_time > expected_time * 2)
+		if (actual_time > expected_time << 1)  /*  same actual_time > expected_time * 2 */
 			difficulty = adj_blk->info.difficulty - 1; /* Decrease difficulty */
+		else if (actual_time < expected_time >> 1)  /* same actual_time < expected_time / 2 */
+			difficulty = adj_blk->info.difficulty + 1; /* Increase difficulty */
 		else
 			difficulty = adj_blk->info.difficulty;  /* Keep same */
 	}
