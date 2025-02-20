@@ -15,16 +15,16 @@ uint32_t blockchain_difficulty(blockchain_t const *blockchain)
     block = llist_get_tail(blockchain->chain);
 
     /* Check if the current block's index is divisible by the difficulty adjustment interval */
-    if ((block->info.index % DIFF_ADJUSTMENT_INTERVAL == 0) && block->info.index != 0)
+    if ((block->info.index % DIF_ADJ_INT == 0) && block->info.index != 0)
     {
         /* Calculate the index of the block where the difficulty was last adjusted */
-        idx = (llist_size(blockchain->chain) - DIFF_ADJUSTMENT_INTERVAL);
+        idx = (llist_size(blockchain->chain) - DIF_ADJ_INT);
         
         /* Get the block where difficulty was last adjusted */
         adj_block = llist_get_node_at(blockchain->chain, idx);
 
         /* Calculate expected time difference between blocks */
-        exp_time = (block->info.index - adj_block->info.index) * BLOCK_GENERATION_INTERVAL;
+        exp_time = (block->info.index - adj_block->info.index) * BLK_GEN_INT;
 
         /* Calculate the actual time difference between the blocks */
         act_time = block->info.timestamp - adj_block->info.timestamp;
