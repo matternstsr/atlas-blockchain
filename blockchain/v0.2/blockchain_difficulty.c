@@ -33,14 +33,17 @@ uint32_t blockchain_difficulty(blockchain_t const *blockchain)
 		act_time = block->info.timestamp - adj_block->info.timestamp;
 		/* If actual time is much greater than expected, decrease diff */
 		if (act_time > exp_time * 2)  /* bitwise left shift = mult */
-            return (DIFF - 1); /* Decrease diff */
-        /* If the actual time is much less than expected, increase diff */
-        else if (act_time < exp_time / 2)  /* bitwise right shift = div */
-            return (DIFF + 1); /* Increase diff */
-        /* If the actual time is within expected range, keep diff the same */
-        else
+			return (DIFF - 1); /* Decrease diff */
+		/* If the actual time is much less than expected, increase diff */
+		else if (act_time < exp_time / 2)  /* bitwise right shift = div */
+			return (DIFF + 1); /* Increase diff */
+		/* If the actual time is within expected range, keep diff the same */
+		else
+			return (DIFF); /* Keep the same difficulty */
 	}
 	else
-		/* If no adj is needed, return current diff */
+	{
+		/* If no adjustment is needed, return the current difficulty */
 		return (DIFF);
+	}
 }
