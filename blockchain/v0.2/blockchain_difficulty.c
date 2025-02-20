@@ -19,9 +19,10 @@ uint32_t blockchain_difficulty(blockchain_t const *blockchain)
 	lst_blk = llist_get_tail(blockchain->chain);
 	
 	if (lst_blk->info.index % DIF_ADJ_INT == 0 && lst_blk->info.index != 0) 
-	{ 
+	{
+		idx = (llist_size(blockchain->chain) - DIFF_ADJUSTMENT_INTERVAL);
 		/* If last block index is multiple of DIF_ADJ_INT & it's not genesis block, adjust difficulty */
-		adj_blk = llist_get_node_at(blockchain->chain, lst_blk->info.index - DIF_ADJ_INT);
+		adj_blk = llist_get_node_at(blockchain->chain, idx);
 		/* Calculate expected time between two blocks */
 		expected_time = DIF_ADJ_INT * BLK_GEN_INT;
 		/* Calculate actual time difference */
