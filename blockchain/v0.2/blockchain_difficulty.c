@@ -21,7 +21,7 @@ uint32_t blockchain_difficulty(blockchain_t const *blockchain)
 	block = llist_get_tail(blockchain->chain);
 
 	/* Check if current block's index is divisible by diff adj interval */
-	if ((block->info.index % DIF_ADJ_INT == 0) && block->info.index != 0)
+	if (block->info.index % DIF_ADJ_INT == 0 && block->info.index != 0)
 	{
 		/* Calculate index of block where diff was last adjusted */
 		idx = (llist_size(blockchain->chain) - DIF_ADJ_INT);
