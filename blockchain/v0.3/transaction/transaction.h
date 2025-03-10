@@ -7,9 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* Macros */
-#define EC_PUB_LEN 33
-
 /* Structs */
 
 /**
