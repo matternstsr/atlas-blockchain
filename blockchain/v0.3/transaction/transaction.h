@@ -6,7 +6,7 @@
 #include "hblk_crypto.h"
 
 /* Len of the pub key for an elliptic curve (if 33 bytes for copmr format) */
-#define EC_PUB_LEN 33
+/* #define EC_PUB_LEN 33 */
 
 /**
 * struct tx_out_s - Represents a transaction output
