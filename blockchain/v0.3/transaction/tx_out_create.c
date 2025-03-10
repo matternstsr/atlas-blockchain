@@ -3,6 +3,7 @@
 #include <openssl/sha.h>
 #include <string.h>
 #include <stdlib.h>
+include "blockchain.h"
 
 /**
 * tx_out_create - Allocates and initializes a transaction output structure
