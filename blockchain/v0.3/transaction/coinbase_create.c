@@ -7,7 +7,7 @@
  * Return: A pointer to the new transaction, or NULL if creation fails
  */
 transaction_t *coinbase_create(
-    EC_KEY const *receiver, uint32_t block_index);
+    EC_KEY const *receiver, uint32_t block_index)
 {
     transaction_t *new_cbtx;
     to_t *txo;
