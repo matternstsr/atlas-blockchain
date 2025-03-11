@@ -8,23 +8,21 @@
 */
 to_t *tx_out_create(uint32_t amount, const uint8_t pub[EC_PUB_LEN])
 {
-	to_t *new_output = NULL;
-
 	/* Check if public key or amount is invalid */
 	if (!pub || amount == 0)
 		return NULL;
 
 	/* Allocate memory for the new transaction output struct */
-	new_output = calloc(1, sizeof(to_t));
-	if (!new_output)
+	to_t *tx_out = calloc(1, sizeof(to_t));
+	if (!tx_out)
 		return NULL;
 
-	/* Assign the transaction output values */
-	new_output->amount = amount;
-	memcpy(new_output->pub, pub, EC_PUB_LEN);
+	/* Initialize the transaction output with the provided values */
+	tx_out->amount = amount;
+	memcpy(tx_out->pub, pub, EC_PUB_LEN);
 
-	/* Compute the hash for the transaction output */
-	SHA256((uint8_t *)new_output, sizeof(uint32_t) + EC_PUB_LEN, new_output->hash);
+	/* Calculate and assign the hash for the transaction output */
+	SHA256((uint8_t *)tx_out, sizeof(tx_out->amount) + EC_PUB_LEN, tx_out->hash);
 
-	return new_output;
+	return tx_out;
 }
