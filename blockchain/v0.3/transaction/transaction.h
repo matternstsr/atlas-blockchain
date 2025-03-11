@@ -137,7 +137,9 @@ typedef struct update_list_s
 } ul_t;
 
 /* Prototypes */
-
+uto_t *unspent_tx_out_create(
+	uint8_t block_hash[SHA256_DIGEST_LENGTH], uint8_t tx_id[SHA256_DIGEST_LENGTH],
+	const to_t *out);
 to_t *tx_out_create(
 	uint32_t amount, uint8_t const pub[EC_PUB_LEN]);
 
