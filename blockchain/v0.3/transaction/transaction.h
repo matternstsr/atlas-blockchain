@@ -29,7 +29,7 @@
 * @id:      Transaction identifier, a hash of all the inputs and outputs.
 *           This ensures the integrity of the transaction, preventing further modification.
 * @inputs:  List of `tx_in_t *` structures. Represents the transaction's inputs.
-* @outputs: List of `tx_out_t *` structures. Represents the transaction's outputs.
+* @outputs: List of `trans_out_t *` structures. Represents the transaction's outputs.
 */
 typedef struct transaction_s
 {
@@ -39,18 +39,18 @@ typedef struct transaction_s
 } transaction_t;
 
 /**
-* struct tx_out_s - Represents a transaction output
+* struct trans_out_s - Represents a transaction output
 *
 * @amount: The amount being transferred to the recipient
 * @pub:    The public key address of the recipient
 * @hash:   A hash of @amount and @pub, used as the unique identifier for the output
 */
-typedef struct tx_out_s
+typedef struct trans_out_s
 {
 	uint32_t    amount;
 	uint8_t     pub[EC_PUB_LEN];
 	uint8_t     hash[SHA256_DIGEST_LENGTH];
-} tx_out_t, to_t;
+} trans_out_t, to_t;
 
 /**
 * struct tx_in_s - Represents a transaction input
@@ -60,7 +60,7 @@ typedef struct tx_out_s
 *
 * @block_hash:  The hash of the block that contains the transaction identified by @tx_id
 * @tx_id:       The ID of the transaction containing the referenced output
-* @tx_out_hash: The hash of the specific transaction output being referenced
+* @trans_out_hash: The hash of the specific transaction output being referenced
 * @sig:         A signature that prevents any alterations to the transaction's content.
 *               The input is signed by the recipient of the referenced output using their private key.
 */
@@ -68,12 +68,12 @@ typedef struct tx_in_s
 {
 	uint8_t     block_hash[SHA256_DIGEST_LENGTH];
 	uint8_t     tx_id[SHA256_DIGEST_LENGTH];
-	uint8_t     tx_out_hash[SHA256_DIGEST_LENGTH];
+	uint8_t     trans_out_hash[SHA256_DIGEST_LENGTH];
 	sig_t       sig;
 } tx_in_t, ti_t;
 
 /**
-* struct unspent_tx_out_s - Represents an unspent transaction output
+* struct unspent_trans_out_s - Represents an unspent transaction output
 *
 * Description: This structure identifies transaction outputs that have not yet been 
 * consumed in a transaction input, meaning they are still available for spending.
@@ -82,12 +82,12 @@ typedef struct tx_in_s
 * @tx_id:      The ID of the transaction containing the unspent output
 * @out:        A copy of the referenced transaction output
 */
-typedef struct unspent_tx_out_s
+typedef struct unspent_trans_out_s
 {
 	uint8_t     block_hash[SHA256_DIGEST_LENGTH];
 	uint8_t     tx_id[SHA256_DIGEST_LENGTH];
-	tx_out_t    out;
-} unspent_tx_out_t, uto_t;
+	trans_out_t    out;
+} unspent_trans_out_t, uto_t;
 
 /**
 * struct tx_context_s - Tracks the balance available for a specific private key
@@ -158,23 +158,23 @@ sig_t *tx_in_sign(
 ti_t *tx_in_create(const uto_t *unspent);
 
 /**
-* unspent_tx_out_create - creates an unspent transaction struct
+* unspent_trans_out_create - creates an unspent transaction struct
 * @block_hash: hash of block where transaction is at
 * @tx_id: Transaction ID
 * @out: Transaction output
 * Return: NULL or pointer to new unspent transaction
 */
-uto_t *unspent_tx_out_create(
+uto_t *unspent_trans_out_create(
 	uint8_t block_hash[SHA256_DIGEST_LENGTH], uint8_t tx_id[SHA256_DIGEST_LENGTH],
 	const to_t *out);
 
 /**
-* tx_out_create - Creates a new transaction output struct.
+* trans_out_create - Creates a new transaction output struct.
 * @pub: Public key associated with the transaction output.
 * @amount: Amount of the transaction output.
 * Return: Pointer to the new struct or NULL in case of failure.
 */
-to_t *tx_out_create(
+to_t *trans_out_create(
 	uint32_t amount, uint8_t const pub[EC_PUB_LEN]);
 
 /**
