@@ -139,6 +139,18 @@ typedef struct update_list_s
 /* Prototypes */
 
 /**
+ * tx_in_sign - Signs a transaction input after verifying key
+ * @in: Transaction input
+ * @tx_id: hash of transaction holding tx_input
+ * @sender: private key of receiver
+ * @all_unspent: list of all unspent transactions
+ * Return: hash holding the signature or NULL
+ */
+sig_t *tx_in_sign(
+	ti_t *in, uint8_t const tx_id[SHA256_DIGEST_LENGTH], EC_KEY const *sender,
+	llist_t *all_unspent);
+
+/**
 * tx_in_create - creates a transaction input struct
 * @unspent: pointer to unspent transaction to be used
 * Return: NULL or pointer to new transaction input struct
