@@ -1,13 +1,13 @@
 #include "transaction.h"
 
 /**
-* unspent_tx_out_create - creates an unspent transaction struct
+* unspent_trans_out_create - creates an unspent transaction struct
 * @block_hash: hash of block where transaction is at
 * @tx_id: Transaction ID
 * @out: Transaction output
 * Return: NULL or pointer to new unspent transaction
 */
-uto_t *unspent_tx_out_create(
+uto_t *unspent_trans_out_create(
 	uint8_t block_hash[SHA256_DIGEST_LENGTH], uint8_t tx_id[SHA256_DIGEST_LENGTH],
 	const to_t *out)
 {

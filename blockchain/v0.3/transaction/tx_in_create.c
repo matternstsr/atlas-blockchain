@@ -19,7 +19,7 @@ ti_t *tx_in_create(const uto_t *unspent)
 	/* Copy necessary data from the unspent transaction */
 	memcpy(tx_in->block_hash, unspent->block_hash, SHA256_DIGEST_LENGTH);
 	memcpy(tx_in->tx_id, unspent->tx_id, SHA256_DIGEST_LENGTH);
-	memcpy(tx_in->tx_out_hash, unspent->out.hash, SHA256_DIGEST_LENGTH);
+	memcpy(tx_in->trans_out_hash, unspent->out.hash, SHA256_DIGEST_LENGTH);
 
 	return tx_in;
 }
