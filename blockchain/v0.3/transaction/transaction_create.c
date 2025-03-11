@@ -63,13 +63,13 @@ transaction_t *transaction_create(
 }
 
 /**
- * find_a_match - Searches unspent list for matches
- * @unspent: unspent tx
- * @i: iterator needed for llist functions
- * @context: struct holding needed info
- * Return: 0 on success or 1 on fail
+ * match_transaction - Searches through unused transactions to find a match
+ * @unused_tx: Unused transaction
+ * @index: Iterator index used by the linked list functions
+ * @tx_context: Struct holding the necessary information
+ * Return: 0 on success, 1 on failure
  */
-int find_a_match(llist_node_t unspent, unsigned int i, void *context)
+int match_transaction(llist_node_t unused_tx, unsigned int index, void *tx_context);
 {
 	(void)i;
 	ti_t *new_txi;
@@ -93,13 +93,13 @@ int find_a_match(llist_node_t unspent, unsigned int i, void *context)
 }
 
 /**
- * send_tx - Creates tx_outs
- * @amount: amount to send
- * @context: Struct holding info
- * @receiver: pub key of receiver
- * Return: 0 on fail, 1 on success
+ * sign_transaction_input - Signs a transaction input
+ * @input_tx: Transaction input list
+ * @index: Iterator index used by the linked list functions
+ * @tx_context: Struct holding necessary data
+ * Return: 0 on success, 1 on failure
  */
-int send_tx(uint32_t amount, tc_t *context, EC_KEY const *receiver)
+int sign_transaction_input(llist_node_t input_tx, unsigned int index, void *tx_context);
 {
 	to_t *new_txo, *changed;
 	uint8_t pub_rec[EC_PUB_LEN];
@@ -127,14 +127,15 @@ int send_tx(uint32_t amount, tc_t *context, EC_KEY const *receiver)
 	return (1);
 }
 
+
 /**
- * sign_txi - signs input tx
- * @tx_in: Transaction inputs list
- * @i: Iterator needed for the llist functions
- * @context: struct holding needed info
- * Return: 0 on success, 1 on fail
+ * process_transaction_output - Creates outputs for the transaction
+ * @amount: Amount to send
+ * @tx_context: Context holding transaction details
+ * @receiver_key: Public key of the receiver
+ * Return: 0 on failure, 1 on success
  */
-int sign_txi(llist_node_t tx_in, unsigned int i, void *context)
+int process_transaction_output(uint32_t amount, tc_t *tx_context, EC_KEY const *receiver_key);
 {
 	(void)i;
 
