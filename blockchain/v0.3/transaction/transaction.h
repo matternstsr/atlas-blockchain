@@ -288,4 +288,13 @@ int accumulate_output_value(tx_out_t *out, unsigned int i, tv_t *context);
 int coinbase_is_valid(
     const transaction_t *coinbase, uint32_t block_index);
 
+/**
+ * coinbase_create - Creates a new coinbase transaction
+ * @receiver: The public key of the receiver
+ * @block_index: The index of the block to which the coinbase belongs
+ * Return: A pointer to the new transaction, or NULL if creation fails
+ */
+transaction_t *coinbase_create(
+    EC_KEY const *receiver, uint32_t block_index);
+
 #endif
