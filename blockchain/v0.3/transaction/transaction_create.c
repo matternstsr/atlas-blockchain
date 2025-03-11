@@ -91,7 +91,7 @@ int send_tx(uint32_t amount, tc_t *context, EC_KEY const *receiver)
 			return (0);
 		llist_add_node(context->tx->outputs, (llist_node_t *)changed, ADD_NODE_REAR);
 	}
-	return 1;
+	return (1);
 }
 
 /**
@@ -110,5 +110,5 @@ int sign_txi(llist_node_t tx_in, unsigned int i, void *context)
 	tx_in_sign(
 		((ti_t *)tx_in), CONTEXT->tx->id, CONTEXT->sender, CONTEXT->all_unspent
 	);
-	return 0;
+	return (0);
 }
