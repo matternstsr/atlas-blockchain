@@ -205,90 +205,12 @@ int hash_in(llist_node_t input, unsigned int iter, void *buff);
  */
 int hash_out(llist_node_t output, unsigned int iter, void *buff);
 
-/**
- * transaction_create - Creates and returns a new transaction.
- * @sender: Private key of the sender.
- * @receiver: Public key of the receiver.
- * @amount: Amount to send.
- * @all_unspent: List of unspent transaction outputs.
- * Return: NULL on failure or a pointer to the new transaction on success.
- */
+
 transaction_t *transaction_create(
 	EC_KEY const *sender, EC_KEY const *receiver, uint32_t amount,
 	llist_t *all_unspent);
-
-/**
- * find_matching_input - Finds unspent outputs that match the sender's public key.
- * @unspent: Unspent transaction output.
- * @i: Current iterator index.
- * @context: Context containing sender's public key and transaction details.
- * Return: 0 on success, 1 on failure.
- */
-int find_matching_input(llist_node_t unspent, unsigned int i, void *context);
-
-/**
- * generate_outputs - Generates transaction outputs.
- * @amount: Amount to send.
- * @context: Context containing transaction and unspent outputs.
- * @receiver: Receiver's public key.
- * Return: 1 on success, 0 on failure.
- */
-int generate_outputs(uint32_t amount, tc_t *context, EC_KEY const *receiver);
-
-/**
- * sign_input - Signs a transaction input.
- * @tx_in: Current transaction input node.
- * @i: Current iterator index.
- * @context: Context holding transaction and unspent outputs.
- * Return: 0 on success, 1 on failure.
- */
-int sign_input(llist_node_t tx_in, unsigned int i, void *context);
-
-/**
- * transaction_is_valid - Checks the validity of a transaction.
- * @transaction: The transaction to validate.
- * @all_unspent: List of all unspent transaction outputs.
- * Return: 1 if valid, 0 if invalid.
- */
-int transaction_is_valid(
-	transaction_t const *transaction, llist_t *all_unspent);
-
-/**
- * validate_input - Validates a single transaction input.
- * @in: Transaction input to validate.
- * @i: Iterator for list iteration.
- * @context: Context holding the transaction and unspent outputs.
- * Return: 0 on valid input, 1 on invalid input.
- */
-int validate_input(tx_in_t *in, uint32_t i, tv_t *context);
-
-/**
- * check_unspent_match - Checks if the unspent transaction matches the input.
- * @unspent: Unspent transaction output.
- * @in: Transaction input to check.
- * Return: 1 if matched, 0 if not.
- */
-int check_unspent_match(uto_t *unspent, tx_in_t *in);
-
-/**
- * sum_output_amount - Accumulates the output amounts of the transaction.
- * @out: Transaction output to check.
- * @i: Iterator for list iteration.
- * @context: Context holding transaction details.
- * Return: Always returns 0.
- */
-int sum_output_amount(tx_out_t *out, unsigned int i, tv_t *context);
-
-
-
-
-
-
-
-
-
-
-
-
+int find_a_match(llist_node_t unspent, unsigned int i, void *context);
+int send_tx(uint32_t amount, tc_t *context, EC_KEY const *receiver);
+int sign_txi(llist_node_t tx_in, unsigned int i, void *context);
 
 #endif
