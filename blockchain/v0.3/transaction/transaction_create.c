@@ -31,8 +31,6 @@ transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
     ec_to_pub(sender, pub_key);
 
     /* Validate public key conversion */
-/*     if (!pub_key)    {        free(this_tx);        return NULL;    } */
-
     memcpy(context->pub, pub_key, EC_PUB_LEN);
     context->needed = (int)amount;
     context->sender = sender;
