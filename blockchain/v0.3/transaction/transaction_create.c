@@ -9,7 +9,7 @@ int sign_tx_inputs(llist_node_t tx_in, unsigned int iter, void *context);
  * @sender: Private key of sender
  * @receiver: Public key of receiver
  * @amount: Amount to send
- * @unspent_list: List of unspent transactions
+ * @all_unspent: List of unspent transactions
  * Return: NULL on failure, pointer to the new transaction otherwise
  */
 transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
@@ -20,7 +20,7 @@ transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
 	tx_context_t *tx_context = NULL;
 
 	/* Validate inputs */
-	if (!sender || !receiver || !amount || !unspent_list)
+	if (!sender || !receiver || !amount || !all_unspent)
 		return NULL;
 
 	/* Initialize the context and transaction struct */
@@ -31,14 +31,14 @@ transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
 
 	/* Setup context */
 	tx_context->transaction = new_transaction;
-	tx_context->unspent_list = unspent_list;
+	tx_context->all_unspent = all_unspent;
 
 	/* Generate sender's public key */
 	ec_to_pub(sender, sender_pub_key);
-	if (!sender_pub_key)
+	if (ec_to_pub(sender, sender_pub_key) != SUCCESS)
 	{
-		free(new_transaction);
-		return NULL;
+    	free(new_transaction);
+    	return NULL;
 	}
 
 	/* Initialize context with relevant data */
@@ -48,7 +48,7 @@ transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
 
 	/* Process inputs from unspent transactions */
 	new_transaction->inputs = llist_create(MT_SUPPORT_FALSE);
-	llist_for_each(unspent_list, match_unspent_tx, tx_context);
+	llist_for_each(all_unspent, match_unspent_tx, tx_context);
 	if (tx_context->required_amount > 0)
 	{
 		free(new_transaction);
@@ -151,7 +151,7 @@ int sign_tx_inputs(llist_node_t tx_in, unsigned int iter, void *context)
 		return 1;
 
 	/* Sign the transaction input */
-	tx_in_sign(((ti_t *)tx_in), tx_context->transaction->id, tx_context->sender, tx_context->unspent_list);
+	tx_in_sign(((ti_t *)tx_in), tx_context->transaction->id, tx_context->sender, tx_context->all_unspent);
 
 	return 0;
 }
