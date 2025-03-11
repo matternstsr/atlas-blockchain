@@ -3,151 +3,152 @@
 /**
  * transaction_create - Creates a new transaction struct
  * @sender: Private key of sender
- * @receiver: public key of receiver
- * @amount: amount to send
- * @unused_transactions: list of unused transactions
+ * @receiver: Public key of receiver
+ * @amount: Amount to send
+ * @all_unspent: List of unused transactions
  * Return: NULL on Fail or pointer to new transaction
  */
-transaction_t *transaction_create(
-    EC_KEY const *sender, EC_KEY const *receiver, uint32_t amount,
-    llist_t *unused_transactions)
+transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver, 
+                                  uint32_t amount, llist_t *all_unspent)
 {
     uint8_t pub_key[EC_PUB_LEN];
-    transaction_t *this_tx;
-    tc_t *context;
+    transaction_t *this_tx = NULL;
+    tc_t *context = NULL;
 
-    if (!sender || !receiver || !amount || !unused_transactions)
-        return (NULL);
+    /* Validate inputs */
+    if (!sender || !receiver || !amount || !all_unspent)
+        return NULL;
 
-    /* Allocate memory for transaction context and transaction struct */
+    /* Allocate memory for context and transaction */
     context = calloc(1, sizeof(tc_t));
     this_tx = calloc(1, sizeof(transaction_t));
-    if (!this_tx)
-        return (NULL);
+    if (!this_tx || !context)
+        return NULL;
 
-    /* Initialize context structure */
+    /* Set context fields */
     context->tx = this_tx;
-    context->unused_transactions = unused_transactions;
-
-    /* Get sender's public key */
+    context->all_unspent = all_unspent;
     ec_to_pub(sender, pub_key);
-    if (pub_key == NULL)
-        return (free(this_tx), NULL);
-    memcpy(context->pub, pub_key, EC_PUB_LEN);
 
-    /* Set the remaining amount to be fulfilled */
+    /* Validate public key conversion */
+    if (!pub_key)
+    {
+        free(this_tx);
+        return NULL;
+    }
+
+    memcpy(context->pub, pub_key, EC_PUB_LEN);
     context->needed = (int)amount;
     context->sender = sender;
 
-    /* Create inputs list and search for matching unspent transactions */
+    /* Initialize inputs list */
     this_tx->inputs = llist_create(MT_SUPPORT_FALSE);
-    llist_for_each(unused_transactions, match_transaction, context);
 
-    /* If the required amount is still not fulfilled, return NULL */
+    /* Process unspent transactions */
+    llist_for_each(all_unspent, find_a_match, context);
+
+    /* If balance is insufficient, fail */
     if (context->needed > 0)
-        return (free(this_tx), NULL);
+    {
+        free(this_tx);
+        return NULL;
+    }
 
-    /* Create outputs list and process transaction output */
+    /* Create outputs list */
     this_tx->outputs = llist_create(MT_SUPPORT_FALSE);
-    if (!process_transaction_output(amount, context, receiver))
-        return (free(this_tx), NULL);
 
-    /* Calculate the transaction hash and sign inputs */
+    /* Send the transaction */
+    if (!process_transaction_output(amount, context, receiver))
+    {
+        free(this_tx);
+        return NULL;
+    }
+
+    /* Generate transaction hash */
     transaction_hash(this_tx, this_tx->id);
+
+    /* Sign the transaction inputs */
     llist_for_each(this_tx->inputs, sign_transaction_input, context);
 
-    /* Free context after processing */
+    /* Clean up context */
     free(context);
-
-    return (this_tx);
+    return this_tx;
 }
 
 /**
- * match_transaction - Searches through unused transactions to find a match
- * @unused_tx: Unused transaction
- * @index: Iterator index used by the linked list functions
- * @tx_context: Struct holding the necessary information
- * Return: 0 on success, 1 on failure
+ * match_transaction - Searches unspent list for matches
+ * @unspent: Unspent transaction
+ * @i: Iterator needed for llist functions
+ * @context: Struct holding needed info
+ * Return: 0 on success or 1 on fail
  */
-int match_transaction(llist_node_t unused_tx, unsigned int index, void *tx_context)
+int match_transaction(llist_node_t unspent, unsigned int i, void *context)
 {
-    (void)index;
+    (void)i;
     ti_t *new_txi;
 
-    /* Check if the remaining amount is fulfilled or the transaction is invalid */
-    if (CONTEXT->needed <= 0 || !unused_tx)
-        return (1);
+    if (CONTEXT->needed <= 0 || !unspent)
+        return 1;
 
-    /* Check if unspent transaction matches sender's public key */
+    /* If public keys match, add input to transaction */
     if (!memcmp(CONTEXT->pub, UNSPENT->out.pub, EC_PUB_LEN))
     {
-        /* Create input transaction and add to inputs list */
         new_txi = tx_in_create(UNSPENT);
         llist_add_node(CONTEXT->tx->inputs, new_txi, ADD_NODE_REAR);
-
-        /* Update balance and reduce the needed amount */
         CONTEXT->balance += (int)UNSPENT->out.amount;
         CONTEXT->needed -= (int)UNSPENT->out.amount;
     }
-    return (0);
+    return 0;
 }
 
 /**
- * sign_transaction_input - Signs a transaction input
- * @input_tx: Transaction input list
- * @index: Iterator index used by the linked list functions
- * @tx_context: Struct holding necessary data
- * Return: 0 on success, 1 on failure
+ * process_transaction_output - Creates transaction outputs
+ * @amount: Amount to send
+ * @context: Struct holding info
+ * @receiver: Public key of receiver
+ * Return: 0 on fail, 1 on success
  */
-int sign_transaction_input(llist_node_t input_tx, unsigned int index, void *tx_context)
+int process_transaction_output(uint32_t amount, tc_t *context, EC_KEY const *receiver)
 {
-    to_t *new_txo, *changed;
+    to_t *new_txo, *change_txo;
     uint8_t pub_rec[EC_PUB_LEN];
 
-    (void)index;
-    tc_t *context = (tc_t *)tx_context;
-
-    /* Get receiver's public key */
-    ec_to_pub(context->tx->outputs->pub, pub_rec);
-
-    /* Create the new output transaction for the receiver */
-    new_txo = tx_out_create(context->tx->outputs->amount, pub_rec);
+    /* Generate public key for receiver */
+    ec_to_pub(receiver, pub_rec);
+    new_txo = tx_out_create(amount, pub_rec);
     if (!new_txo)
-        return (0);
+        return 0;
 
-    /* Add the output transaction to the list of outputs */
+    /* Add receiver's output to transaction */
     llist_add_node(context->tx->outputs, new_txo, ADD_NODE_REAR);
 
-    /* If there is excess balance, create change output */
-    if (context->balance > (int)context->tx->outputs->amount)
+    /* Handle change if necessary */
+    if (context->balance > (int)amount)
     {
-        changed = tx_out_create((context->balance - context->tx->outputs->amount), context->pub);
-        if (!changed)
-            return (0);
-
-        llist_add_node(context->tx->outputs, (llist_node_t *)changed, ADD_NODE_REAR);
+        change_txo = tx_out_create((context->balance - amount), context->pub);
+        if (!change_txo)
+            return 0;
+        llist_add_node(context->tx->outputs, (llist_node_t *)change_txo, ADD_NODE_REAR);
     }
-    return (1);
+
+    return 1;
 }
 
 /**
- * process_transaction_output - Creates outputs for the transaction
- * @amount: Amount to send
- * @tx_context: Context holding transaction details
- * @receiver_key: Public key of the receiver
- * Return: 0 on failure, 1 on success
+ * sign_transaction_input - Signs input transaction
+ * @tx_in: Transaction input
+ * @i: Iterator needed for llist functions
+ * @context: Struct holding needed info
+ * Return: 0 on success, 1 on fail
  */
-int process_transaction_output(uint32_t amount, tc_t *tx_context, EC_KEY const *receiver_key)
+int sign_transaction_input(llist_node_t tx_in, unsigned int i, void *context)
 {
-    (void)receiver_key;
+    (void)i;
 
-    /* Ensure the transaction input exists before signing */
-    if (!tx_context)
-        return (1);
+    if (!tx_in)
+        return 1;
 
-    /* Sign the transaction input using sender's private key */
-    tx_in_sign(
-        ((ti_t *)tx_context), tx_context->tx->id, tx_context->sender, tx_context->unused_transactions
-    );
-    return (0);
+    /* Sign the input transaction */
+    tx_in_sign(((ti_t *)tx_in), CONTEXT->tx->id, CONTEXT->sender, CONTEXT->all_unspent);
+    return 0;
 }
