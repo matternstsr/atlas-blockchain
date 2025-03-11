@@ -54,7 +54,7 @@ int hash_in(llist_node_t input, unsigned int iter, void *buff)
 
 	/* Copy the input data into the buffer at the correct position */
 	if (memcpy(&((uint8_t *)buff)[pos], input, 96))
-		return 0;
+		return (0);
 	return (1);
 }
 
@@ -71,6 +71,6 @@ int hash_out(llist_node_t output, unsigned int iter, void *buff)
 
 	/* Copy the output data into the buffer at the correct position */
 	if (memcpy(&((uint8_t *)buff)[pos], (uint8_t *)output + PTR_MOVE, 32))
-		return 0;
+		return (0);
 	return (1);
 }
