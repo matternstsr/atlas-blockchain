@@ -205,4 +205,44 @@ int hash_in(llist_node_t input, unsigned int iter, void *buff);
 int hash_out(llist_node_t output, unsigned int iter, void *buff);
 
 
+/**
+ * create_transaction - Creates a new transaction struct
+ * @sender: Private key of sender
+ * @receiver: Public key of receiver
+ * @amount: Amount to send
+ * @unspent_list: List of unspent transactions
+ * Return: NULL on failure, pointer to the new transaction otherwise
+ */
+transaction_t *create_transaction(
+	EC_KEY const *sender, EC_KEY const *receiver, uint32_t amount,
+	llist_t *unspent_list);
+
+/**
+ * create_outputs - Creates transaction outputs
+ * @amount: Amount to send
+ * @context: Struct holding context information
+ * @receiver: Public key of the receiver
+ * Return: 0 on failure, 1 on success
+ */
+int create_outputs(uint32_t amount, tx_context_t *context, EC_KEY const *receiver);
+
+/**
+ * match_unspent_tx - Finds matching unspent transaction outputs
+ * @unspent: Unspent transaction
+ * @iter: Iteration index in list
+ * @context: Struct holding needed data
+ * Return: 0 on success, 1 on failure
+ */
+int match_unspent_tx(llist_node_t unspent, unsigned int iter, void *context);
+
+/**
+ * sign_tx_inputs - Signs transaction inputs
+ * @tx_in: Transaction input
+ * @iter: Iteration index in list
+ * @context: Struct holding needed data
+ * Return: 0 on success, 1 on failure
+ */
+int sign_tx_inputs(llist_node_t tx_in, unsigned int iter, void *context);
+
+
 #endif
