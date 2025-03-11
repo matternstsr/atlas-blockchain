@@ -1,9 +1,9 @@
 #include "transaction.h"
 
 /**
- * transaction_destroy - Frees a transaction and its associated lists
- * @transaction: The transaction to be freed
- */
+* transaction_destroy - Frees a transaction and its associated lists
+* @transaction: The transaction to be freed
+*/
 void transaction_destroy(transaction_t *transaction)
 {
     /* Ensure transaction is not NULL */
