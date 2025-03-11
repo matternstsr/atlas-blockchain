@@ -86,6 +86,22 @@ int validate_input_signature(tx_in_t *in, uint32_t i, tv_t *context)
 }
 
 /**
+ * accumulate_output_value - Calculates the total value of the transaction outputs
+ * @out: Output to check
+ * @i: Iterator needed for llist functions (unused)
+ * @context: Structure holding the transaction and unspent outputs
+ * Return: Always 0
+ */
+int accumulate_output_value(tx_out_t *out, unsigned int i, tv_t *context)
+{
+    (void)i;  /* Suppress unused parameter warning */
+
+    /* Accumulate the amount from the output into the total output sum */
+    context->output += out->amount;
+    return 0;  /* Always return 0 as this function doesn't fail */
+}
+
+/**
  * match_unspent_output - Compares the hash of unspent outputs with the input transaction
  * @unspent: Unspent transaction output
  * @in: Input transaction to compare
@@ -103,18 +119,3 @@ int match_unspent_output(uto_t *unspent, tx_in_t *in)
     return 0;  /* Return 0 if any of the hashes don't match */
 }
 
-/**
- * accumulate_output_value - Calculates the total value of the transaction outputs
- * @out: Output to check
- * @i: Iterator needed for llist functions (unused)
- * @context: Structure holding the transaction and unspent outputs
- * Return: Always 0
- */
-int accumulate_output_value(tx_out_t *out, unsigned int i, tv_t *context)
-{
-    (void)i;  /* Suppress unused parameter warning */
-
-    /* Accumulate the amount from the output into the total output sum */
-    context->output += out->amount;
-    return 0;  /* Always return 0 as this function doesn't fail */
-}
