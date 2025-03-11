@@ -2,7 +2,7 @@
 
 /**
  * transaction_create - Initializes a new transaction
- * @sender_key: Private key of the sender
+ * @sender_pub_key: Private key of the sender
  * @receiver: Public key of the receiver
  * @amount: The amount to transfer
  * @unused_transactions: List of unused transactions
@@ -16,7 +16,7 @@ transaction_t *transaction_create(
 	transaction_t *new_transaction;
 	tc_t *tx_context;
 
-	if (!sender_key || !receiver || !amount || !unused_transactions)
+	if (!sender_pub_key || !receiver || !amount || !unused_transactions)
 		return (NULL);
 
 	tx_context = calloc(1, sizeof(tc_t));
@@ -27,13 +27,13 @@ transaction_t *transaction_create(
 	tx_context->transaction = new_transaction;
 	tx_context->unused_transactions = unused_transactions;
 
-	ec_to_pub(sender_key, sender_pub_key);
+	ec_to_pub(sender_pub_key, sender_pub_key);
 	if (!sender_pub_key)
 		return (free(new_transaction), NULL);
 
 	memcpy(tx_context->sender_pub_key, sender_pub_key, EC_PUB_LEN);
 	tx_context->remaining_amount = (int)amount;
-	tx_context->sender_key = sender_key;
+	tx_context->sender_pub_key = sender_pub_key;
 
 	new_transaction->inputs = llist_create(MT_SUPPORT_FALSE);
 	llist_for_each(unused_transactions, match_transaction, tx_context);
@@ -123,7 +123,7 @@ int sign_transaction_input(llist_node_t input_tx, unsigned int index, void *tx_c
 		return (1);
 
 	sign_transaction_input_data(
-		((transaction_input_t *)input_tx), tx_context->transaction->id, tx_context->sender_key, tx_context->unused_transactions
+		((transaction_input_t *)input_tx), tx_context->transaction->id, tx_context->sender_pub_key, tx_context->unused_transactions
 	);
 	return (0);
 }
