@@ -99,13 +99,17 @@ typedef struct unspent_tx_out_s
 */
 typedef struct tx_context_s
 {
-	uint8_t       pub[EC_PUB_LEN];
-	int           balance;
-	int           needed;
-	transaction_t *tx;
-	EC_KEY const  *sender;
-	llist_t       *all_unspent;
+    uint8_t       pub[EC_PUB_LEN]; /* Public key */
+    int           balance; /* Total balance */
+    int           needed; /* Amount needed for transaction */
+    transaction_t *transaction; /* Pointer to transaction */
+    EC_KEY const  *sender; /* Sender's private key */
+    llist_t       *all_unspent; /* List of all unspent transaction outputs */
+    uint8_t       sender_pub_key[EC_PUB_LEN]; /* Sender's public key */
+    int           required_amount; /* Amount required for transaction */
+    llist_t       *unspent_list; /* List of unspent transaction outputs */
 } tx_context_t;
+
 
 /**
 * struct tx_valid_s - Holds information to validate a transaction
