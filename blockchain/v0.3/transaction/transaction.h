@@ -20,8 +20,7 @@
 #define UNSPENT ((uto_t *)unspent)
 #define CONTEXT ((tx_context_t *)context)
 #define SUCCESS 0
-#define SIG_MAX_LEN 64  /* Assuming 64 bytes for signature size */
-
+#define SIG_MAX_LEN 64  // Assuming 64 bytes for signature size
 
 /* Structs */
 
@@ -35,9 +34,9 @@
 */
 typedef struct transaction_s
 {
-	uint8_t     id[SHA256_DIGEST_LENGTH];
-	llist_t     *inputs;
-	llist_t     *outputs;
+    uint8_t     id[SHA256_DIGEST_LENGTH];
+    llist_t     *inputs;
+    llist_t     *outputs;
 } transaction_t;
 
 /**
@@ -49,9 +48,9 @@ typedef struct transaction_s
 */
 typedef struct tx_out_s
 {
-	uint32_t    amount;
-	uint8_t     pub[EC_PUB_LEN];
-	uint8_t     hash[SHA256_DIGEST_LENGTH];
+    uint32_t    amount;
+    uint8_t     pub[EC_PUB_LEN];
+    uint8_t     hash[SHA256_DIGEST_LENGTH];
 } tx_out_t, to_t;
 
 /**
@@ -68,10 +67,10 @@ typedef struct tx_out_s
 */
 typedef struct tx_in_s
 {
-	uint8_t     block_hash[SHA256_DIGEST_LENGTH];
-	uint8_t     tx_id[SHA256_DIGEST_LENGTH];
-	uint8_t     tx_out_hash[SHA256_DIGEST_LENGTH];
-	sig_t       sig;
+    uint8_t     block_hash[SHA256_DIGEST_LENGTH];
+    uint8_t     tx_id[SHA256_DIGEST_LENGTH];
+    uint8_t     tx_out_hash[SHA256_DIGEST_LENGTH];
+    sig_t       sig;
 } tx_in_t, ti_t;
 
 /**
@@ -86,9 +85,9 @@ typedef struct tx_in_s
 */
 typedef struct unspent_tx_out_s
 {
-	uint8_t     block_hash[SHA256_DIGEST_LENGTH];
-	uint8_t     tx_id[SHA256_DIGEST_LENGTH];
-	tx_out_t    out;
+    uint8_t     block_hash[SHA256_DIGEST_LENGTH];
+    uint8_t     tx_id[SHA256_DIGEST_LENGTH];
+    tx_out_t    out;
 } unspent_tx_out_t, uto_t;
 
 /**
@@ -105,14 +104,13 @@ typedef struct tx_context_s
     uint8_t       pub[EC_PUB_LEN]; /* Public key */
     int           balance; /* Total balance */
     int           needed; /* Amount needed for transaction */
-    transaction_t *transaction; /* Pointer to transaction */
+    transaction_t *tx; /* Pointer to transaction */
     EC_KEY const  *sender; /* Sender's private key */
     llist_t       *all_unspent; /* List of all unspent transaction outputs */
     uint8_t       sender_pub_key[EC_PUB_LEN]; /* Sender's public key */
     int           required_amount; /* Amount required for transaction */
     llist_t       *unspent_list; /* List of unspent transaction outputs */
 } tx_context_t;
-
 
 /**
 * struct tx_valid_s - Holds information to validate a transaction
@@ -127,12 +125,11 @@ typedef struct tx_valid_s
     uint32_t   output;
     uint8_t    tx_id[SHA256_DIGEST_LENGTH];
     llist_t    *unspent;
-    transaction_t *tx;  /* Transaction pointer */
-    int        needed;  /* Amount needed for transaction */
-    EC_KEY const *sender; /* Sender's private key (or public key) */
-    int        balance; /* Balance available */
+    transaction_t *tx;  // Pointer to transaction
+    int        needed;  // Amount needed for transaction
+    EC_KEY const *sender; // Sender's private key
+    int        balance; // Available balance
 } tv_t, tc_t;
-
 
 /**
 * struct update_list_s - Holds information for updating the list of unspent outputs
@@ -142,115 +139,25 @@ typedef struct tx_valid_s
 */
 typedef struct update_list_s
 {
-	uint8_t    hash[SHA256_DIGEST_LENGTH];
-	llist_t    *unspent;
-	uint8_t    tx_id[SHA256_DIGEST_LENGTH];
+    uint8_t    hash[SHA256_DIGEST_LENGTH];
+    llist_t    *unspent;
+    uint8_t    tx_id[SHA256_DIGEST_LENGTH];
 } ul_t;
 
-/* Prototypes */
-
-/**
-* tx_in_sign - Signs a transaction input after verifying key
-* @in: Transaction input
-* @tx_id: hash of transaction holding tx_input
-* @sender: private key of receiver
-* @all_unspent: list of all unspent transactions
-* Return: hash holding the signature or NULL
-*/
-sig_t *tx_in_sign(
-	ti_t *in, uint8_t const tx_id[SHA256_DIGEST_LENGTH], EC_KEY const *sender,
-	llist_t *all_unspent);
-
-/**
-* tx_in_create - creates a transaction input struct
-* @unspent: pointer to unspent transaction to be used
-* Return: NULL or pointer to new transaction input struct
-*/
+/* Function Prototypes */
+sig_t *tx_in_sign(ti_t *in, uint8_t const tx_id[SHA256_DIGEST_LENGTH], EC_KEY const *sender, llist_t *all_unspent);
 ti_t *tx_in_create(const uto_t *unspent);
-
-/**
-* unspent_tx_out_create - creates an unspent transaction struct
-* @block_hash: hash of block where transaction is at
-* @tx_id: Transaction ID
-* @out: Transaction output
-* Return: NULL or pointer to new unspent transaction
-*/
-uto_t *unspent_tx_out_create(
-	uint8_t block_hash[SHA256_DIGEST_LENGTH], uint8_t tx_id[SHA256_DIGEST_LENGTH],
-	const to_t *out);
-
-/**
-* tx_out_create - Creates a new transaction output struct.
-* @pub: Public key associated with the transaction output.
-* @amount: Amount of the transaction output.
-* Return: Pointer to the new struct or NULL in case of failure.
-*/
-to_t *tx_out_create(
-	uint32_t amount, uint8_t const pub[EC_PUB_LEN]);
-
-/**
-* transaction_hash - Calculates the hash of a transaction
-* @transaction: transaction to hash
-* @hash_buf: buffer to hold the hash
-* Return: pointer to hash_buff or NULL
-*/
-uint8_t *transaction_hash(
-	transaction_t const *transaction, uint8_t hash_buf[SHA256_DIGEST_LENGTH]);
-
-/**
-* hash_in - reads inputs into a buffer for hashing
-* @input: node in list
-* @iter: Iteration index in list
-* @buff: Buffer to read into
-* Return: returns 0 on success, 1 on fail
-*/
+uto_t *unspent_tx_out_create(uint8_t block_hash[SHA256_DIGEST_LENGTH], uint8_t tx_id[SHA256_DIGEST_LENGTH], const to_t *out);
+to_t *tx_out_create(uint32_t amount, uint8_t const pub[EC_PUB_LEN]);
+uint8_t *transaction_hash(transaction_t const *transaction, uint8_t hash_buf[SHA256_DIGEST_LENGTH]);
 int hash_in(llist_node_t input, unsigned int iter, void *buff);
-
-/**
-* hash_out - reads outputs into a buffer for hashing
-* @output: node in list
-* @iter: Iteration index in list
-* @buff: Buffer to read into
-* Return: returns 0 on success, 1 on fail
-*/
 int hash_out(llist_node_t output, unsigned int iter, void *buff);
-
-/**
- * transaction_create - Creates a new transaction struct
- * @sender: Private key of sender
- * @receiver: Public key of receiver
- * @amount: Amount to send
- * @unspent_list: List of unspent transactions
- * Return: NULL on failure, pointer to the new transaction otherwise
- */
-transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
-									uint32_t amount, llist_t *all_unspent);
-
-/**
-* create_outputs - Creates transaction outputs
-* @amount: Amount to send
-* @context: Struct holding context information
-* @receiver: Public key of the receiver
-* Return: 0 on failure, 1 on success
-*/
+transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver, uint32_t amount, llist_t *all_unspent);
 int create_outputs(uint32_t amount, tx_context_t *context, EC_KEY const *receiver);
-
-/**
-* match_unspent_tx - Finds matching unspent transaction outputs
-* @unspent: Unspent transaction
-* @iter: Iteration index in list
-* @context: Struct holding needed data
-* Return: 0 on success, 1 on failure
-*/
 int match_unspent_tx(llist_node_t unspent, unsigned int iter, void *context);
-
-/**
-* sign_tx_inputs - Signs transaction inputs
-* @tx_in: Transaction input
-* @iter: Iteration index in list
-* @context: Struct holding needed data
-* Return: 0 on success, 1 on failure
-*/
 int sign_tx_inputs(llist_node_t tx_in, unsigned int iter, void *context);
+int find_a_match(llist_node_t unspent, unsigned int iter, void *context);
+int send_tx(uint32_t amount, tx_context_t *context, EC_KEY const *receiver);
+void sign_txi(llist_node_t tx_in, unsigned int iter, void *context);
 
-#endif
+#endif /* _TRANSACTION_H_ */

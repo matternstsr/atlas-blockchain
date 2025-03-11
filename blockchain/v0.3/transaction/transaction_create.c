@@ -1,114 +1,163 @@
 #include "transaction.h"
+#include "hblk_crypto.h"
+#include <openssl/sha.h>
+#include <llist.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdio.h>
+#include <assert.h>
 
-/**
- * transaction_create - Creates a new transaction struct
- * @sender: Private key of sender
- * @receiver: public key of receiver
- * @amount: amount to send
- * @all_unspent: list of unused transactions
- * Return: NULL on Fail or pointer to new transaction
- */
-transaction_t *transaction_create(
-	EC_KEY const *sender, EC_KEY const *receiver, uint32_t amount,
-	llist_t *all_unspent)
+/* Function to create a new transaction */
+transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver, uint32_t amount, llist_t *all_unspent)
 {
-	uint8_t pub_key[EC_PUB_LEN];
-	transaction_t *this_tx;
-	tc_t *context;
+    tx_context_t context = {0};
+    transaction_t *new_tx = NULL;
 
-	if (!sender || !receiver || !amount || !all_unspent)
-		return (NULL);
-	context = calloc(1, sizeof(tc_t));
-	this_tx = calloc(1, sizeof(transaction_t));
-	if (!this_tx)
-		return (NULL);
-	context->tx = this_tx, context->all_unspent = all_unspent;
-	ec_to_pub(sender, pub_key);
-	if (pub_key == NULL)
-		return (free(this_tx), NULL);
-	memcpy(context->pub, pub_key, EC_PUB_LEN);
-	context->needed = (int)amount, context->sender = sender;
-	this_tx->inputs = llist_create(MT_SUPPORT_FALSE);
-	llist_for_each(all_unspent, find_a_match, context);
-	if (context->needed > 0)
-		return (free(this_tx), NULL);
-	this_tx->outputs = llist_create(MT_SUPPORT_FALSE);
-	if (!send_tx(amount, context, receiver))
-		return (free(this_tx), NULL);
-	transaction_hash(this_tx, this_tx->id);
-	llist_for_each(this_tx->inputs, sign_txi, context);
-	free(context);
-	return (this_tx);
+    context.sender = sender;
+    context.balance = 0;
+    context.all_unspent = all_unspent;
+
+    if (!create_outputs(amount, &context, receiver))
+        return NULL;
+
+    new_tx = malloc(sizeof(transaction_t));
+    if (!new_tx)
+        return NULL;
+
+    context.tx = new_tx;
+
+    llist_for_each(all_unspent, find_a_match, &context);
+
+    transaction_hash(new_tx, new_tx->id);
+
+    return new_tx;
 }
 
-/**
- * find_a_match - Searches unspent list for matches
- * @unspent: unspent tx
- * @i: iterator needed for llist functions
- * @context: struct holding needed info
- * Return: 0 on success or 1 on fail
- */
-int find_a_match(llist_node_t unspent, unsigned int i, void *context)
+/* Create transaction outputs for the given amount */
+int create_outputs(uint32_t amount, tx_context_t *context, EC_KEY const *receiver)
 {
-	(void)i;
-	ti_t *new_txi;
+    tx_out_t *output = NULL;
+    uint8_t *receiver_pub_key = NULL;
 
-	if (CONTEXT->needed <= 0 || !unspent)
-		return (1);
+    receiver_pub_key = EC_KEY_get_pub_key(receiver);
 
-	if (!memcmp(CONTEXT->pub, UNSPENT->out.pub, EC_PUB_LEN))
-	{
-		new_txi = tx_in_create(UNSPENT);
-		llist_add_node(CONTEXT->tx->inputs, new_txi, ADD_NODE_REAR);
-		CONTEXT->balance += (int)UNSPENT->out.amount;
-		CONTEXT->needed -= (int)UNSPENT->out.amount;
-	}
-	return (0);
+    output = tx_out_create(amount, receiver_pub_key);
+    if (!output)
+        return 0;
+
+    llist_add_node(context->tx->outputs, output, ADD_NODE_REAR);
+
+    return 1;
 }
 
-/**
- * send_tx - Creates tx_outs
- * @amount: amount to send
- * @context: Struct holding info
- * @receiver: pub key of receiver
- * Return: 0 on fail, 1 on success
- */
-int send_tx(uint32_t amount, tc_t *context, EC_KEY const *receiver)
+/* Match unspent transactions with necessary criteria */
+int match_unspent_tx(llist_node_t unspent, unsigned int iter, void *context)
 {
-	to_t *new_txo, *changed;
-	uint8_t pub_rec[EC_PUB_LEN];
+    tx_context_t *tx_ctx = (tx_context_t *)context;
+    unspent_tx_out_t *unspent_output = (unspent_tx_out_t *)unspent;
 
-	ec_to_pub(receiver, pub_rec);
-	new_txo = tx_out_create(amount, pub_rec);
-	if (!new_txo)
-		return (0);
-	llist_add_node(context->tx->outputs, new_txo, ADD_NODE_REAR);
+    if (unspent_output->out.amount <= tx_ctx->needed) {
+        tx_ctx->balance += unspent_output->out.amount;
+        llist_add_node(tx_ctx->tx->inputs, unspent_output, ADD_NODE_REAR);
+    }
 
-	if (context->balance > (int)amount)
-	{
-		changed = tx_out_create((context->balance - amount), context->pub);
-		if (!changed)
-			return (0);
-		llist_add_node(context->tx->outputs, (llist_node_t *)changed, ADD_NODE_REAR);
-	}
-	return (1);
+    return 0;
 }
 
-/**
- * sign_txi - signs input tx
- * @tx_in: Transaction inputs list
- * @i: Iterator needed for the llist functions
- * @context: struct holding needed info
- * Return: 0 on success, 1 on fail
- */
-int sign_txi(llist_node_t tx_in, unsigned int i, void *context)
+/* Sign transaction inputs */
+int sign_tx_inputs(llist_node_t tx_in, unsigned int iter, void *context)
 {
-	(void)i;
+    tx_context_t *tx_ctx = (tx_context_t *)context;
+    tx_in_t *input = (tx_in_t *)tx_in;
 
-	if (!tx_in)
-		return (1);
-	tx_in_sign(
-		((ti_t *)tx_in), CONTEXT->tx->id, CONTEXT->sender, CONTEXT->all_unspent
-	);
-	return (0);
+    input->sig = tx_in_sign(input, tx_ctx->tx->id, tx_ctx->sender, tx_ctx->all_unspent);
+
+    return 0;
+}
+
+/* Find matching unspent transaction output */
+int find_a_match(llist_node_t unspent, unsigned int iter, void *context)
+{
+    tx_context_t *tx_ctx = (tx_context_t *)context;
+    unspent_tx_out_t *unspent_output = (unspent_tx_out_t *)unspent;
+    if (tx_ctx->balance < tx_ctx->needed) {
+        tx_ctx->balance += unspent_output->out.amount;
+        llist_add_node(tx_ctx->tx->inputs, unspent_output, ADD_NODE_REAR);
+    }
+
+    return 0;
+}
+
+/* Send the transaction to the network (dummy function here) */
+int send_tx(uint32_t amount, tx_context_t *context, EC_KEY const *receiver)
+{
+    printf("Transaction of %u sent to receiver.\n", amount);
+
+    return 1;
+}
+
+/* Sign individual transaction input */
+void sign_txi(llist_node_t tx_in, unsigned int iter, void *context)
+{
+    tx_context_t *tx_ctx = (tx_context_t *)context;
+    tx_in_t *input = (tx_in_t *)tx_in;
+    input->sig = tx_in_sign(input, tx_ctx->tx->id, tx_ctx->sender, tx_ctx->all_unspent);
+}
+
+/* Create the transaction output for a specific amount and public key */
+to_t *tx_out_create(uint32_t amount, uint8_t const pub[EC_PUB_LEN])
+{
+    to_t *output = malloc(sizeof(to_t));
+    if (!output)
+        return NULL;
+
+    output->amount = amount;
+    memcpy(output->pub, pub, EC_PUB_LEN);
+    SHA256_CTX sha256_ctx;
+    SHA256_Init(&sha256_ctx);
+    SHA256_Update(&sha256_ctx, &output->amount, sizeof(output->amount));
+    SHA256_Update(&sha256_ctx, output->pub, EC_PUB_LEN);
+    SHA256_Final(output->hash, &sha256_ctx);
+
+    return output;
+}
+
+/* Generate the hash for the transaction */
+uint8_t *transaction_hash(transaction_t const *transaction, uint8_t hash_buf[SHA256_DIGEST_LENGTH])
+{
+    SHA256_CTX sha256_ctx;
+    SHA256_Init(&sha256_ctx);
+    llist_for_each(transaction->inputs, hash_in, hash_buf);
+    llist_for_each(transaction->outputs, hash_out, hash_buf);
+
+    SHA256_Final(hash_buf, &sha256_ctx);
+
+    return hash_buf;
+}
+
+/* Add a node to the list of inputs */
+int hash_in(llist_node_t input, unsigned int iter, void *buff)
+{
+    tx_in_t *tx_in = (tx_in_t *)input;
+    SHA256_CTX sha256_ctx;
+    SHA256_Init(&sha256_ctx);
+    SHA256_Update(&sha256_ctx, tx_in->tx_id, sizeof(tx_in->tx_id));
+    SHA256_Update(&sha256_ctx, tx_in->tx_out_hash, sizeof(tx_in->tx_out_hash));
+    SHA256_Update(&sha256_ctx, &tx_in->sig, sizeof(tx_in->sig));
+    SHA256_Final(buff, &sha256_ctx);
+
+    return 0;
+}
+
+/* Add a node to the list of outputs */
+int hash_out(llist_node_t output, unsigned int iter, void *buff)
+{
+    tx_out_t *tx_out = (tx_out_t *)output;
+    SHA256_CTX sha256_ctx;
+    SHA256_Init(&sha256_ctx);
+    SHA256_Update(&sha256_ctx, &tx_out->amount, sizeof(tx_out->amount));
+    SHA256_Update(&sha256_ctx, tx_out->pub, EC_PUB_LEN);
+    SHA256_Final(buff, &sha256_ctx);
+
+    return 0;
 }
