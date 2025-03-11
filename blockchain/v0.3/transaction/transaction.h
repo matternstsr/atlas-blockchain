@@ -1,10 +1,16 @@
 #ifndef _TRANSACTION_H_
 #define _TRANSACTION_H_
 
+#include "hblk_crypto.h"
 #include <openssl/sha.h>
-#include <stdint.h>
+#include <llist.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
+#include <time.h>
 
 /* Structs */
 
