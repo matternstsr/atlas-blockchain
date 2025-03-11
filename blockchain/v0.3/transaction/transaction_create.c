@@ -1,7 +1,7 @@
 #include "transaction.h"
 
 int match_unspent_tx(llist_node_t unspent, unsigned int iter, void *context);
-int create_outputs(uint32_t amount, tx_context_t *context, EC_KEY const *receiver);
+int create_outputs(uint32_t amount, tx_context_s *context, EC_KEY const *receiver);
 int sign_tx_inputs(llist_node_t tx_in, unsigned int iter, void *context);
 
 /**
@@ -18,14 +18,14 @@ transaction_t *create_transaction(
 {
 	uint8_t sender_pub_key[EC_PUB_LEN];
 	transaction_t *new_transaction = NULL;
-	tx_context_t *tx_context = NULL;
+	tx_context_s *tx_context = NULL;
 
 	/* Validate inputs */
 	if (!sender || !receiver || !amount || !unspent_list)
 		return NULL;
 
 	/* Initialize the context and transaction struct */
-	tx_context = calloc(1, sizeof(tx_context_t));
+	tx_context = calloc(1, sizeof(tx_context_s));
 	new_transaction = calloc(1, sizeof(transaction_t));
 	if (!new_transaction || !tx_context)
 		return NULL;
@@ -85,7 +85,7 @@ transaction_t *create_transaction(
 int match_unspent_tx(llist_node_t unspent, unsigned int iter, void *context)
 {
 	(void)iter;
-	tx_context_t *tx_context = (tx_context_t *)context;
+	tx_context_s *tx_context = (tx_context_s *)context;
 	ti_t *tx_input = NULL;
 
 	if (tx_context->required_amount <= 0 || !unspent)
@@ -109,7 +109,7 @@ int match_unspent_tx(llist_node_t unspent, unsigned int iter, void *context)
  * @receiver: Public key of the receiver
  * Return: 0 on failure, 1 on success
  */
-int create_outputs(uint32_t amount, tx_context_t *context, EC_KEY const *receiver)
+int create_outputs(uint32_t amount, tx_context_s *context, EC_KEY const *receiver)
 {
 	to_t *new_output = NULL, *change_output = NULL;
 	uint8_t receiver_pub_key[EC_PUB_LEN];
@@ -146,7 +146,7 @@ int create_outputs(uint32_t amount, tx_context_t *context, EC_KEY const *receive
 int sign_tx_inputs(llist_node_t tx_in, unsigned int iter, void *context)
 {
 	(void)iter;
-	tx_context_t *tx_context = (tx_context_t *)context;
+	tx_context_s *tx_context = (tx_context_s *)context;
 
 	if (!tx_in)
 		return 1;

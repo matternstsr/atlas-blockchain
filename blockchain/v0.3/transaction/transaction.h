@@ -224,7 +224,7 @@ transaction_t *create_transaction(
  * @receiver: Public key of the receiver
  * Return: 0 on failure, 1 on success
  */
-int create_outputs(uint32_t amount, tx_context_t *context, EC_KEY const *receiver);
+int create_outputs(uint32_t amount, tx_context_s *context, EC_KEY const *receiver);
 
 /**
  * match_unspent_tx - Finds matching unspent transaction outputs
