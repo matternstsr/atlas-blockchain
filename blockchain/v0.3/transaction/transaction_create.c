@@ -54,7 +54,7 @@ transaction_t *transaction_create(
 
     /* Calculate the transaction hash and sign inputs */
     transaction_hash(this_tx, this_tx->id);
-    llist_for_each(this_tx->inputs, sign_txi, context);
+    llist_for_each(this_tx->inputs, process_transaction_output, context);
 
     /* Free context after processing */
     free(context);
