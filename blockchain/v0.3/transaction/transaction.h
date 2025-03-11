@@ -205,4 +205,11 @@ int hash_in(llist_node_t input, unsigned int iter, void *buff);
 int hash_out(llist_node_t output, unsigned int iter, void *buff);
 
 
+transaction_t *transaction_create(
+	EC_KEY const *sender, EC_KEY const *receiver, uint32_t amount,
+	llist_t *all_unspent);
+int find_a_match(llist_node_t unspent, unsigned int i, void *context);
+int send_tx(uint32_t amount, tc_t *context, EC_KEY const *receiver);
+int sign_txi(llist_node_t tx_in, unsigned int i, void *context);
+
 #endif
