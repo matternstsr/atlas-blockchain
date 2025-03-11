@@ -31,7 +31,7 @@ transaction_t *transaction_create(
 
 	/* Get sender's public key */
 	ec_to_pub(sender, pub_key);
-	if (!pub_key)
+    if (pub_key == NULL)
 		return (free(this_tx), NULL);
 	memcpy(context->pub, pub_key, EC_PUB_LEN);
 
@@ -49,7 +49,7 @@ transaction_t *transaction_create(
 
 	/* Create outputs list and process transaction output */
 	this_tx->outputs = llist_create(MT_SUPPORT_FALSE);
-	if (!send_tx(amount, context, receiver))
+	if (!sign_transaction_input(amount, context, receiver))
 		return (free(this_tx), NULL);
 
 	/* Calculate the transaction hash and sign inputs */
