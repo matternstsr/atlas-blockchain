@@ -280,6 +280,12 @@ int match_unspent_output(uto_t *unspent, tx_in_t *in);
 int accumulate_output_value(tx_out_t *out, unsigned int i, tv_t *context);
 
 /**
+ * transaction_destroy - Frees a transaction and its associated lists
+ * @transaction: The transaction to be freed
+ */
+void transaction_destroy(transaction_t *transaction);
+
+/**
  * coinbase_is_valid - Verifies the validity of a coinbase transaction
  * @coinbase: The transaction to be checked
  * @block_index: The index of the block to which the coinbase belongs
