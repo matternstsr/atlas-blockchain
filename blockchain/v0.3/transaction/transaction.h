@@ -165,5 +165,32 @@ uto_t *unspent_tx_out_create(
 to_t *tx_out_create(
 	uint32_t amount, uint8_t const pub[EC_PUB_LEN]);
 
+/**
+ * transaction_hash - Calculates the hash of a transaction
+ * @transaction: transaction to hash
+ * @hash_buf: buffer to hold the hash
+ * Return: pointer to hash_buff or NULL
+ */
+uint8_t *transaction_hash(
+	transaction_t const *transaction, uint8_t hash_buf[SHA256_DIGEST_LENGTH]);
+
+/**
+ * hash_in - reads inputs into a buffer for hashing
+ * @input: node in list
+ * @iter: Iteration index in list
+ * @buff: Buffer to read into
+ * Return: returns 0 on success, 1 on fail
+ */
+int hash_in(llist_node_t input, unsigned int iter, void *buff);
+
+/**
+ * hash_out - reads outputs into a buffer for hashing
+ * @output: node in list
+ * @iter: Iteration index in list
+ * @buff: Buffer to read into
+ * Return: returns 0 on success, 1 on fail
+ */
+int hash_out(llist_node_t output, unsigned int iter, void *buff);
+
 
 #endif
