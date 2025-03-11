@@ -49,7 +49,7 @@ transaction_t *transaction_create(
 
     /* Create outputs list and process transaction output */
     this_tx->outputs = llist_create(MT_SUPPORT_FALSE);
-    if (!sign_transaction_input(amount, context, receiver))
+    if (!process_transaction_output(amount, context, receiver))
         return (free(this_tx), NULL);
 
     /* Calculate the transaction hash and sign inputs */
