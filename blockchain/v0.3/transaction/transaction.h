@@ -137,9 +137,31 @@ typedef struct update_list_s
 } ul_t;
 
 /* Prototypes */
+
+/**
+* tx_in_create - creates a transaction input struct
+* @unspent: pointer to unspent transaction to be used
+* Return: NULL or pointer to new transaction input struct
+*/
+ti_t *tx_in_create(const uto_t *unspent);
+
+/**
+* unspent_tx_out_create - creates an unspent transaction struct
+* @block_hash: hash of block where transaction is at
+* @tx_id: Transaction ID
+* @out: Transaction output
+* Return: NULL or pointer to new unspent transaction
+*/
 uto_t *unspent_tx_out_create(
 	uint8_t block_hash[SHA256_DIGEST_LENGTH], uint8_t tx_id[SHA256_DIGEST_LENGTH],
 	const to_t *out);
+
+/**
+* tx_out_create - Creates a new transaction output struct.
+* @pub: Public key associated with the transaction output.
+* @amount: Amount of the transaction output.
+* Return: Pointer to the new struct or NULL in case of failure.
+*/
 to_t *tx_out_create(
 	uint32_t amount, uint8_t const pub[EC_PUB_LEN]);
 
