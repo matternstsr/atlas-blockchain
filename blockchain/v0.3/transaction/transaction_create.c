@@ -28,11 +28,7 @@ transaction_t *transaction_create(
 
 	/* Set up the context and public key for sender */
 	ec_to_pub(sender, pub_key);
-	if (!pub_key)
-	{
-		free(new_tx);
-		return NULL;
-	}
+/* 	if (!pub_key)	{		free(new_tx);		return NULL;	} */
 
 	memcpy(context->pub, pub_key, EC_PUB_LEN);
 	context->sender = sender;
