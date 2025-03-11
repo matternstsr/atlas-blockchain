@@ -5,18 +5,18 @@
  * @sender: Private key of sender
  * @receiver: Public key of receiver
  * @amount: Amount to send
- * @all_unspent: List of unused transactions
+ * @unused_transactions: List of unused transactions
  * Return: NULL on Fail or pointer to new transaction
  */
 transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver, 
-                                  uint32_t amount, llist_t *all_unspent)
+                                  uint32_t amount, llist_t *unused_transactions)
 {
     uint8_t pub_key[EC_PUB_LEN];
     transaction_t *this_tx = NULL;
     tc_t *context = NULL;
 
     /* Validate inputs */
-    if (!sender || !receiver || !amount || !all_unspent)
+    if (!sender || !receiver || !amount || !unused_transactions)
         return NULL;
 
     /* Allocate memory for context and transaction */
@@ -27,7 +27,7 @@ transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
 
     /* Set context fields */
     context->tx = this_tx;
-    context->all_unspent = all_unspent;
+    context->unused_transactions = unused_transactions;
     ec_to_pub(sender, pub_key);
 
     /* Validate public key conversion */
@@ -45,7 +45,7 @@ transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
     this_tx->inputs = llist_create(MT_SUPPORT_FALSE);
 
     /* Process unspent transactions */
-    llist_for_each(all_unspent, find_a_match, context);
+    llist_for_each(unused_transactions, find_a_match, context);
 
     /* If balance is insufficient, fail */
     if (context->needed > 0)
@@ -149,6 +149,6 @@ int sign_transaction_input(llist_node_t tx_in, unsigned int i, void *context)
         return 1;
 
     /* Sign the input transaction */
-    tx_in_sign(((ti_t *)tx_in), CONTEXT->tx->id, CONTEXT->sender, CONTEXT->all_unspent);
+    tx_in_sign(((ti_t *)tx_in), CONTEXT->tx->id, CONTEXT->sender, CONTEXT->unused_transactions);
     return 0;
 }
