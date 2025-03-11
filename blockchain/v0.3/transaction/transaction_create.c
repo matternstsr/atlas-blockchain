@@ -5,18 +5,18 @@
  * @sender: Private key of sender
  * @receiver: public key of receiver
  * @amount: amount to send
- * @all_unspent: list of unused transactions
+ * @unused_transactions: list of unused transactions
  * Return: NULL on Fail or pointer to new transaction
  */
 transaction_t *transaction_create(
 	EC_KEY const *sender, EC_KEY const *receiver, uint32_t amount,
-	llist_t *all_unspent)
+	llist_t *unused_transactions)
 {
 	uint8_t pub_key[EC_PUB_LEN];
 	transaction_t *this_tx;
 	tc_t *context;
 
-	if (!sender || !receiver || !amount || !all_unspent)
+	if (!sender || !receiver || !amount || !unused_transactions)
 		return (NULL);
 
 	/* Allocate memory for transaction context and transaction struct */
@@ -27,7 +27,7 @@ transaction_t *transaction_create(
 
 	/* Initialize context structure */
 	context->tx = this_tx;
-	context->all_unspent = all_unspent;
+	context->unused_transactions = unused_transactions;
 
 	/* Get sender's public key */
 	ec_to_pub(sender, pub_key);
@@ -41,7 +41,7 @@ transaction_t *transaction_create(
 
 	/* Create inputs list and search for matching unspent transactions */
 	this_tx->inputs = llist_create(MT_SUPPORT_FALSE);
-	llist_for_each(all_unspent, find_a_match, context);
+	llist_for_each(unused_transactions, find_a_match, context);
 
 	/* If the required amount is still not fulfilled, return NULL */
 	if (context->needed > 0)
@@ -145,7 +145,7 @@ int process_transaction_output(uint32_t amount, tc_t *tx_context, EC_KEY const *
 
 	/* Sign the transaction input using sender's private key */
 	tx_in_sign(
-		((ti_t *)tx_in), CONTEXT->tx->id, CONTEXT->sender, CONTEXT->all_unspent
+		((ti_t *)tx_in), CONTEXT->tx->id, CONTEXT->sender, CONTEXT->unused_transactions
 	);
 	return (0);
 }
