@@ -18,7 +18,6 @@ transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
     /* Validate inputs */
     if (!sender || !receiver || !amount || !unused_transactions)
         return NULL;
-
     /* Allocate memory for context and transaction */
     context = calloc(1, sizeof(tc_t));
     this_tx = calloc(1, sizeof(transaction_t));
@@ -57,7 +56,6 @@ transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
         free(this_tx);
         return NULL;
     }
-
     /* Generate transaction hash */
     transaction_hash(this_tx, this_tx->id);
 
