@@ -1,157 +1,140 @@
 #include "transaction.h"
 
-int match_unspent_tx(llist_node_t unspent, unsigned int iter, void *context);
-int create_outputs(uint32_t amount, tx_context_t *context, EC_KEY const *receiver);
-int sign_tx_inputs(llist_node_t tx_in, unsigned int iter, void *context);
+int find_matches(llist_node_t unspent, unsigned int iter, void *context);
+int send_tx(uint32_t amount, tc_t *context, EC_KEY const *receiver);
+int sig_ins(llist_node_t tx_in, unsigned int iter, void *context);
 
-/**
+/*
  * transaction_create - Creates a new transaction struct
  * @sender: Private key of sender
  * @receiver: Public key of receiver
  * @amount: Amount to send
- * @all_unspent: List of unspent transactions
- * Return: NULL on failure, pointer to the new transaction otherwise
+ * @all_unspent: List of unused transactions
+ * Return: NULL on failure, pointer to new transaction otherwise
  */
-transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
-									uint32_t amount, llist_t *all_unspent)
+transaction_t *transaction_create(
+    EC_KEY const *sender, EC_KEY const *receiver, uint32_t amount,
+    llist_t *all_unspent)
 {
-	uint8_t sender_pub_key[EC_PUB_LEN];
-	transaction_t *new_transaction = NULL;
-	tx_context_t *tx_context = NULL;
+    uint8_t pub_key[EC_PUB_LEN];
+    transaction_t *tx = NULL;
+    tc_t *context = NULL;
 
-	/* Validate inputs */
-	if (!sender || !receiver || !amount || !all_unspent)
-		return NULL;
+    if (!sender || !receiver || !amount || !all_unspent)
+        return NULL;
 
-	/* Initialize the context and transaction struct */
-	tx_context = calloc(1, sizeof(tx_context_t));
-	new_transaction = calloc(1, sizeof(transaction_t));
-	if (!new_transaction || !tx_context)
-		return NULL;
+    context = calloc(1, sizeof(tc_t));
+    tx = calloc(1, sizeof(transaction_t));
+    if (!tx || !context)
+        return free(context), NULL;
 
-	/* Setup context */
-	tx_context->transaction = new_transaction;
-	tx_context->all_unspent = all_unspent;
+    context->tx = tx;
+    context->all_unspent = all_unspent;
 
-	/* Generate sender's public key */
-	ec_to_pub(sender, sender_pub_key);
-	if (ec_to_pub(sender, sender_pub_key) != SUCCESS)
-	{
-    	free(new_transaction);
-    	return NULL;
-	}
+    /* Generate public key for sender */
+    ec_to_pub(sender, pub_key);
+    if (!pub_key)
+        return free(tx), free(context), NULL;
 
-	/* Initialize context with relevant data */
-	memcpy(tx_context->sender_pub_key, sender_pub_key, EC_PUB_LEN);
-	tx_context->required_amount = (int)amount;
-	tx_context->sender = sender;
+    memcpy(context->pub, pub_key, EC_PUB_LEN);
+    context->needed = (int)amount;
+    context->sender = sender;
 
-	/* Process inputs from unspent transactions */
-	new_transaction->inputs = llist_create(MT_SUPPORT_FALSE);
-	llist_for_each(all_unspent, match_unspent_tx, tx_context);
-	if (tx_context->required_amount > 0)
-	{
-		free(new_transaction);
-		return NULL;
-	}
+    /* Initialize inputs list */
+    tx->inputs = llist_create(MT_SUPPORT_FALSE);
 
-	/* Create outputs for the transaction */
-	new_transaction->outputs = llist_create(MT_SUPPORT_FALSE);
-	if (!create_outputs(amount, tx_context, receiver))
-	{
-		free(new_transaction);
-		return NULL;
-	}
+    /* Find matching unspent transactions */
+    llist_for_each(all_unspent, find_matches, context);
+    if (context->needed > 0)
+        return free(tx), free(context), NULL;
 
-	/* Hash the transaction */
-	transaction_hash(new_transaction, new_transaction->id);
+    /* Initialize outputs list */
+    tx->outputs = llist_create(MT_SUPPORT_FALSE);
 
-	/* Sign the transaction inputs */
-	llist_for_each(new_transaction->inputs, sign_tx_inputs, tx_context);
+    /* Send transaction */
+    if (!send_tx(amount, context, receiver))
+        return free(tx), free(context), NULL;
 
-	/* Clean up and return the new transaction */
-	free(tx_context);
-	return new_transaction;
+    /* Hash the transaction */
+    transaction_hash(tx, tx->id);
+
+    /* Sign the inputs */
+    llist_for_each(tx->inputs, sig_ins, context);
+
+    /* Cleanup */
+    free(context);
+    return tx;
 }
 
-/**
- * match_unspent_tx - Finds matching unspent transaction outputs
+/*
+ * find_matches - Finds matches in the unspent list
  * @unspent: Unspent transaction
- * @iter: Iteration index in list
- * @context: Struct holding needed data
+ * @iter: Iterator to track index in list
+ * @context: Struct holding the needed info
  * Return: 0 on success, 1 on failure
  */
-int match_unspent_tx(llist_node_t unspent, unsigned int iter, void *context)
+int find_matches(llist_node_t unspent, unsigned int iter, void *context)
 {
-	(void)iter;
-	tx_context_t *tx_context = (tx_context_t *)context;
-	ti_t *tx_input = NULL;
+    (void)iter;
+    ti_t *new = NULL;
 
-	if (tx_context->required_amount <= 0 || !unspent)
-		return 1;
+    if (CONTEXT->needed <= 0 || !unspent)
+        return 1;
 
-	/* Check if the unspent transaction output matches */
-	if (!memcmp(tx_context->sender_pub_key, ((uto_t *)unspent)->out.pub, EC_PUB_LEN))
-	{
-		tx_input = tx_in_create((uto_t *)unspent);
-		llist_add_node(tx_context->transaction->inputs, tx_input, ADD_NODE_REAR);
-		tx_context->balance += (int)((uto_t *)unspent)->out.amount;
-		tx_context->required_amount -= (int)((uto_t *)unspent)->out.amount;
-	}
-	return 0;
+    if (!memcmp(CONTEXT->pub, UNSPENT->out.pub, EC_PUB_LEN))
+    {
+        new = tx_in_create(UNSPENT);
+        llist_add_node(CONTEXT->tx->inputs, new, ADD_NODE_REAR);
+        CONTEXT->balance += (int)UNSPENT->out.amount;
+        CONTEXT->needed -= (int)UNSPENT->out.amount;
+    }
+    return 0;
 }
 
-/**
- * create_outputs - Creates transaction outputs
+/*
+ * send_tx - Creates transaction outputs
  * @amount: Amount to send
- * @context: Struct holding context information
+ * @context: Struct holding the context
  * @receiver: Public key of the receiver
- * Return: 0 on failure, 1 on success
+ * Return: 1 on success, 0 on failure
  */
-int create_outputs(uint32_t amount, tx_context_t *context, EC_KEY const *receiver)
+int send_tx(uint32_t amount, tc_t *context, EC_KEY const *receiver)
 {
-	to_t *new_output = NULL, *change_output = NULL;
-	uint8_t receiver_pub_key[EC_PUB_LEN];
+    to_t *new = NULL, *chg = NULL;
+    uint8_t pub_rec[EC_PUB_LEN];
 
-	/* Get the receiver's public key */
-	ec_to_pub(receiver, receiver_pub_key);
-	new_output = tx_out_create(amount, receiver_pub_key);
-	if (!new_output)
-		return 0;
+    ec_to_pub(receiver, pub_rec);
+    new = tx_out_create(amount, pub_rec);
+    if (!new)
+        return 0;
 
-	/* Add the output to the transaction */
-	llist_add_node(context->transaction->outputs, new_output, ADD_NODE_REAR);
+    llist_add_node(context->tx->outputs, new, ADD_NODE_REAR);
 
-	/* If there's change, create a change output */
-	if (context->balance > (int)amount)
-	{
-		change_output = tx_out_create((context->balance - amount), context->sender_pub_key);
-		if (!change_output)
-			return 0;
+    if (context->balance > (int)amount)
+    {
+        chg = tx_out_create((context->balance - amount), context->pub);
+        if (!chg)
+            return 0;
+        llist_add_node(context->tx->outputs, (llist_node_t *)chg, ADD_NODE_REAR);
+    }
 
-		/* Add change output to transaction */
-		llist_add_node(context->transaction->outputs, (llist_node_t *)change_output, ADD_NODE_REAR);
-	}
-	return 1;
+    return 1;
 }
 
-/**
- * sign_tx_inputs - Signs transaction inputs
- * @tx_in: Transaction input
- * @iter: Iteration index in list
- * @context: Struct holding needed data
+/*
+ * sig_ins - Signs the input transactions
+ * @tx_in: Transaction inputs list
+ * @iter: Iterator to track index in list
+ * @context: Struct holding the needed info
  * Return: 0 on success, 1 on failure
  */
-int sign_tx_inputs(llist_node_t tx_in, unsigned int iter, void *context)
+int sig_ins(llist_node_t tx_in, unsigned int iter, void *context)
 {
-	(void)iter;
-	tx_context_t *tx_context = (tx_context_t *)context;
+    (void)iter;
 
-	if (!tx_in)
-		return 1;
+    if (!tx_in)
+        return 1;
 
-	/* Sign the transaction input */
-	tx_in_sign(((ti_t *)tx_in), tx_context->transaction->id, tx_context->sender, tx_context->all_unspent);
-
-	return 0;
+    tx_in_sign(((ti_t *)tx_in), CONTEXT->tx->id, CONTEXT->sender, CONTEXT->all_unspent);
+    return 0;
 }
