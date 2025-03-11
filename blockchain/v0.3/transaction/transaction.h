@@ -208,7 +208,7 @@ int hash_out(llist_node_t output, unsigned int iter, void *buff);
 /**
  * transaction_create - Initializes a new transaction
  * @sender_key: Private key of the sender
- * @receiver_key: Public key of the receiver
+ * @receiver: Public key of the receiver
  * @amount: The amount to transfer
  * @unused_transactions: List of unused transactions
  * Return: NULL if failed, otherwise pointer to the newly created transaction
