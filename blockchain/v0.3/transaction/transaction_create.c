@@ -45,7 +45,7 @@ transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
     this_tx->inputs = llist_create(MT_SUPPORT_FALSE);
 
     /* Process unspent transactions */
-    llist_for_each(unused_transactions, find_a_match, context);
+    llist_for_each(unused_transactions, match_transaction, context);
 
     /* If balance is insufficient, fail */
     if (context->needed > 0)
