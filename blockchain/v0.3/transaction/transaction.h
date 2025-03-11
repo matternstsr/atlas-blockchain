@@ -205,12 +205,43 @@ int hash_in(llist_node_t input, unsigned int iter, void *buff);
  */
 int hash_out(llist_node_t output, unsigned int iter, void *buff);
 
+/**
+ * create_transaction - Initializes a new transaction
+ * @sender_key: Private key of the sender
+ * @receiver_key: Public key of the receiver
+ * @amount: The amount to transfer
+ * @unused_transactions: List of unused transactions
+ * Return: NULL if failed, otherwise pointer to the newly created transaction
+ */
+transaction_t *create_transaction(
+	EC_KEY const *sender_key, EC_KEY const *receiver_key, uint32_t amount,
+	llist_t *unused_transactions);
 
-transaction_t *transaction_create(
-	EC_KEY const *sender, EC_KEY const *receiver, uint32_t amount,
-	llist_t *all_unspent);
-int find_a_match(llist_node_t unspent, unsigned int i, void *context);
-int send_tx(uint32_t amount, tc_t *context, EC_KEY const *receiver);
-int sign_txi(llist_node_t tx_in, unsigned int i, void *context);
+/**
+ * match_transaction - Searches through unused transactions to find a match
+ * @unused_tx: Unused transaction
+ * @index: Iterator index used by the linked list functions
+ * @tx_context: Struct holding the necessary information
+ * Return: 0 on success, 1 on failure
+ */
+int match_transaction(llist_node_t unused_tx, unsigned int index, void *tx_context);
+
+/**
+ * sign_transaction_input - Signs a transaction input
+ * @input_tx: Transaction input list
+ * @index: Iterator index used by the linked list functions
+ * @tx_context: Struct holding necessary data
+ * Return: 0 on success, 1 on failure
+ */
+int sign_transaction_input(llist_node_t input_tx, unsigned int index, void *tx_context);
+
+/**
+ * process_transaction_output - Creates outputs for the transaction
+ * @amount: Amount to send
+ * @tx_context: Context holding transaction details
+ * @receiver_key: Public key of the receiver
+ * Return: 0 on failure, 1 on success
+ */
+int process_transaction_output(uint32_t amount, tx_context_t *tx_context, EC_KEY const *receiver_key);
 
 #endif
