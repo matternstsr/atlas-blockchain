@@ -19,6 +19,8 @@
 #define PTR_MOVE (sizeof(uint32_t) + EC_PUB_LEN)
 #define UNSPENT ((uto_t *)unspent)
 #define CONTEXT ((tx_context_t *)context)
+#define SUCCESS 0
+#define SIG_MAX_LEN 64  // Assuming 64 bytes for signature size
 
 
 /* Structs */
