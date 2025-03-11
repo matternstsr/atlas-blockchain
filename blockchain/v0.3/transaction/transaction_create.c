@@ -10,7 +10,7 @@
  */
 transaction_t *transaction_create(
 	EC_KEY const *sender, EC_KEY const *receiver, uint32_t amount,
-	llist_t *all_unspent)
+	llist_t *unused_transactions)
 {
 	uint8_t sender_pub_key[EC_PUB_LEN];
 	transaction_t *new_transaction;

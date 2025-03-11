@@ -3,22 +3,22 @@
 /**
  * transaction_is_valid - Checks the validity of a transaction.
  * @transaction: The transaction to validate.
- * @all_unspent: List of all unspent transaction outputs.
+ * @unused_transactions: List of all unspent transaction outputs.
  * Return: 1 if valid, 0 if invalid.
  */
 int transaction_is_valid(
-	transaction_t const *transaction, llist_t *all_unspent)
+	transaction_t const *transaction, llist_t *unused_transactions)
 {
 	uint8_t calculated_hash[SHA256_DIGEST_LENGTH];
 	tv_t validation_context = {0};
 
 	/* Check for null inputs */
-	if (!transaction || !all_unspent)
+	if (!transaction || !unused_transactions)
 		return 0;
 
 	/* Initialize the validation context with transaction ID */
 	memcpy(validation_context.tx_id, transaction->id, SHA256_DIGEST_LENGTH);
-	validation_context.unspent = all_unspent;
+	validation_context.unspent = unused_transactions;
 
 	/* Calculate and compare transaction hash */
 	transaction_hash(transaction, calculated_hash);

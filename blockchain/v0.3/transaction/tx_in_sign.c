@@ -7,22 +7,22 @@ int check_hash(llist_node_t out, void *hash);
 * @in: Transaction input
 * @tx_id: hash of transaction holding tx_input
 * @sender: private key of receiver
-* @all_unspent: list of all unspent transactions
+* @unused_transactions: list of all unspent transactions
 * Return: hash holding the signature or NULL
 */
 sig_t *tx_in_sign(
 	ti_t *in, uint8_t const tx_id[SHA256_DIGEST_LENGTH], EC_KEY const *sender,
-	llist_t *all_unspent)
+	llist_t *unused_transactions)
 {
 	uint8_t pub_key[EC_PUB_LEN] = {0};
 	uto_t *trans_out = NULL;
 
 	/* Validate input parameters */
-	if (!in || !tx_id || !sender || !all_unspent)
+	if (!in || !tx_id || !sender || !unused_transactions)
 		return NULL;
 
 	/* Find the matching unspent transaction */
-	trans_out = llist_find_node(all_unspent, check_hash, in->tx_out_hash);
+	trans_out = llist_find_node(unused_transactions, check_hash, in->tx_out_hash);
 	if (!trans_out)
 		return NULL;
 

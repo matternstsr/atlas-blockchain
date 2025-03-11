@@ -97,7 +97,7 @@ typedef struct unspent_tx_out_s
 * @needed: The amount required for sending
 * @tx: The transaction structure
 * @sender: The sender's private key
-* @all_unspent: A list of unspent transaction outputs (uto_t)
+* @unused_transactions: A list of unspent transaction outputs (uto_t)
 */
 typedef struct tx_context_s
 {
@@ -106,7 +106,7 @@ typedef struct tx_context_s
 	int           needed;
 	transaction_t *tx;
 	EC_KEY const  *sender;
-	llist_t       *all_unspent;
+	llist_t       *unused_transactions;
 } tc_t;
 
 /**
@@ -144,12 +144,12 @@ typedef struct update_list_s
  * @in: Transaction input
  * @tx_id: hash of transaction holding tx_input
  * @sender: private key of receiver
- * @all_unspent: list of all unspent transactions
+ * @unused_transactions: list of all unspent transactions
  * Return: hash holding the signature or NULL
  */
 sig_t *tx_in_sign(
 	ti_t *in, uint8_t const tx_id[SHA256_DIGEST_LENGTH], EC_KEY const *sender,
-	llist_t *all_unspent);
+	llist_t *unused_transactions);
 
 /**
 * tx_in_create - creates a transaction input struct
@@ -215,7 +215,7 @@ int hash_out(llist_node_t output, unsigned int iter, void *buff);
  */
 transaction_t *transaction_create(
 	EC_KEY const *sender, EC_KEY const *receiver, uint32_t amount,
-	llist_t *all_unspent);
+	llist_t *unused_transactions);
 
 /**
  * match_transaction - Searches through unused transactions to find a match
