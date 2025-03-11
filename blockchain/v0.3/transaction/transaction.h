@@ -20,7 +20,7 @@
 #define UNSPENT ((uto_t *)unspent)
 #define CONTEXT ((tx_context_t *)context)
 #define SUCCESS 0
-#define SIG_MAX_LEN 64  // Assuming 64 bytes for signature size
+#define SIG_MAX_LEN 64  /* Assuming 64 bytes for signature size */
 
 
 /* Structs */
@@ -123,11 +123,16 @@ typedef struct tx_context_s
 */
 typedef struct tx_valid_s
 {
-	uint32_t   input;
-	uint32_t   output;
-	uint8_t    tx_id[SHA256_DIGEST_LENGTH];
-	llist_t    *unspent;
+    uint32_t   input;
+    uint32_t   output;
+    uint8_t    tx_id[SHA256_DIGEST_LENGTH];
+    llist_t    *unspent;
+    transaction_t *tx;  /* Transaction pointer */
+    int        needed;  /* Amount needed for transaction */
+    EC_KEY const *sender; /* Sender's private key (or public key) */
+    int        balance; /* Balance available */
 } tv_t, tc_t;
+
 
 /**
 * struct update_list_s - Holds information for updating the list of unspent outputs
