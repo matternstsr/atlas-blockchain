@@ -11,6 +11,8 @@
 #include <stdint.h>
 #include <time.h>
 #include <stdio.h>
+#include "transaction/transaction.h"
+
 
 #define DIFF block->info.difficulty
 #define BLK_GEN_INT 1 /* BLOCK GENERATION INTERVAL 1 sec (adjust as nec) */
