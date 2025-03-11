@@ -18,8 +18,7 @@
 #define BUFF_SIZE ((32 * 3 * ins) + (32 * outs))
 #define PTR_MOVE (sizeof(uint32_t) + EC_PUB_LEN)
 #define UNSPENT ((uto_t *)unspent)
-#define CONTEXT ((tc_t *)context)
-
+#define CONTEXT ((tx_context_t *)context)
 
 /* Structs */
 
@@ -106,7 +105,7 @@ typedef struct tx_context_s
 	transaction_t *tx;
 	EC_KEY const  *sender;
 	llist_t       *all_unspent;
-} tc_t;
+} tx_context_t;
 
 /**
 * struct tx_valid_s - Holds information to validate a transaction
@@ -139,13 +138,13 @@ typedef struct update_list_s
 /* Prototypes */
 
 /**
- * tx_in_sign - Signs a transaction input after verifying key
- * @in: Transaction input
- * @tx_id: hash of transaction holding tx_input
- * @sender: private key of receiver
- * @all_unspent: list of all unspent transactions
- * Return: hash holding the signature or NULL
- */
+* tx_in_sign - Signs a transaction input after verifying key
+* @in: Transaction input
+* @tx_id: hash of transaction holding tx_input
+* @sender: private key of receiver
+* @all_unspent: list of all unspent transactions
+* Return: hash holding the signature or NULL
+*/
 sig_t *tx_in_sign(
 	ti_t *in, uint8_t const tx_id[SHA256_DIGEST_LENGTH], EC_KEY const *sender,
 	llist_t *all_unspent);
@@ -178,71 +177,69 @@ to_t *tx_out_create(
 	uint32_t amount, uint8_t const pub[EC_PUB_LEN]);
 
 /**
- * transaction_hash - Calculates the hash of a transaction
- * @transaction: transaction to hash
- * @hash_buf: buffer to hold the hash
- * Return: pointer to hash_buff or NULL
- */
+* transaction_hash - Calculates the hash of a transaction
+* @transaction: transaction to hash
+* @hash_buf: buffer to hold the hash
+* Return: pointer to hash_buff or NULL
+*/
 uint8_t *transaction_hash(
 	transaction_t const *transaction, uint8_t hash_buf[SHA256_DIGEST_LENGTH]);
 
 /**
- * hash_in - reads inputs into a buffer for hashing
- * @input: node in list
- * @iter: Iteration index in list
- * @buff: Buffer to read into
- * Return: returns 0 on success, 1 on fail
- */
+* hash_in - reads inputs into a buffer for hashing
+* @input: node in list
+* @iter: Iteration index in list
+* @buff: Buffer to read into
+* Return: returns 0 on success, 1 on fail
+*/
 int hash_in(llist_node_t input, unsigned int iter, void *buff);
 
 /**
- * hash_out - reads outputs into a buffer for hashing
- * @output: node in list
- * @iter: Iteration index in list
- * @buff: Buffer to read into
- * Return: returns 0 on success, 1 on fail
- */
+* hash_out - reads outputs into a buffer for hashing
+* @output: node in list
+* @iter: Iteration index in list
+* @buff: Buffer to read into
+* Return: returns 0 on success, 1 on fail
+*/
 int hash_out(llist_node_t output, unsigned int iter, void *buff);
 
-
 /**
- * create_transaction - Creates a new transaction struct
- * @sender: Private key of sender
- * @receiver: Public key of receiver
- * @amount: Amount to send
- * @unspent_list: List of unspent transactions
- * Return: NULL on failure, pointer to the new transaction otherwise
- */
+* create_transaction - Creates a new transaction struct
+* @sender: Private key of sender
+* @receiver: Public key of receiver
+* @amount: Amount to send
+* @unspent_list: List of unspent transactions
+* Return: NULL on failure, pointer to the new transaction otherwise
+*/
 transaction_t *create_transaction(
 	EC_KEY const *sender, EC_KEY const *receiver, uint32_t amount,
 	llist_t *unspent_list);
 
 /**
- * create_outputs - Creates transaction outputs
- * @amount: Amount to send
- * @context: Struct holding context information
- * @receiver: Public key of the receiver
- * Return: 0 on failure, 1 on success
- */
-int create_outputs(uint32_t amount, tx_context_s *context, EC_KEY const *receiver);
+* create_outputs - Creates transaction outputs
+* @amount: Amount to send
+* @context: Struct holding context information
+* @receiver: Public key of the receiver
+* Return: 0 on failure, 1 on success
+*/
+int create_outputs(uint32_t amount, tx_context_t *context, EC_KEY const *receiver);
 
 /**
- * match_unspent_tx - Finds matching unspent transaction outputs
- * @unspent: Unspent transaction
- * @iter: Iteration index in list
- * @context: Struct holding needed data
- * Return: 0 on success, 1 on failure
- */
+* match_unspent_tx - Finds matching unspent transaction outputs
+* @unspent: Unspent transaction
+* @iter: Iteration index in list
+* @context: Struct holding needed data
+* Return: 0 on success, 1 on failure
+*/
 int match_unspent_tx(llist_node_t unspent, unsigned int iter, void *context);
 
 /**
- * sign_tx_inputs - Signs transaction inputs
- * @tx_in: Transaction input
- * @iter: Iteration index in list
- * @context: Struct holding needed data
- * Return: 0 on success, 1 on failure
- */
+* sign_tx_inputs - Signs transaction inputs
+* @tx_in: Transaction input
+* @iter: Iteration index in list
+* @context: Struct holding needed data
+* Return: 0 on success, 1 on failure
+*/
 int sign_tx_inputs(llist_node_t tx_in, unsigned int iter, void *context);
-
 
 #endif
