@@ -16,6 +16,7 @@
 #define COINBASE_AMOUNT 50
 #define BLOCKCHAIN_DATA_MAX 1024
 #define BUFF_SIZE ((32 * 3 * ins) + (32 * outs))
+#define SIG_MAX_LEN 64 
 #define PTR_MOVE (sizeof(uint32_t) + EC_PUB_LEN)
 #define UNSPENT ((uto_t *)unspent)
 #define CONTEXT ((tc_t *)context)
