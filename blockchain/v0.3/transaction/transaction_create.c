@@ -5,16 +5,15 @@ int create_outputs(uint32_t amount, tx_context_t *context, EC_KEY const *receive
 int sign_tx_inputs(llist_node_t tx_in, unsigned int iter, void *context);
 
 /**
- * create_transaction - Creates a new transaction struct
+ * transaction_create - Creates a new transaction struct
  * @sender: Private key of sender
  * @receiver: Public key of receiver
  * @amount: Amount to send
  * @unspent_list: List of unspent transactions
  * Return: NULL on failure, pointer to the new transaction otherwise
  */
-transaction_t *create_transaction(
-	EC_KEY const *sender, EC_KEY const *receiver, uint32_t amount,
-	llist_t *unspent_list)
+transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
+									uint32_t amount, llist_t *all_unspent)
 {
 	uint8_t sender_pub_key[EC_PUB_LEN];
 	transaction_t *new_transaction = NULL;

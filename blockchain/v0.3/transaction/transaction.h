@@ -208,16 +208,15 @@ int hash_in(llist_node_t input, unsigned int iter, void *buff);
 int hash_out(llist_node_t output, unsigned int iter, void *buff);
 
 /**
-* create_transaction - Creates a new transaction struct
-* @sender: Private key of sender
-* @receiver: Public key of receiver
-* @amount: Amount to send
-* @unspent_list: List of unspent transactions
-* Return: NULL on failure, pointer to the new transaction otherwise
-*/
-transaction_t *create_transaction(
-	EC_KEY const *sender, EC_KEY const *receiver, uint32_t amount,
-	llist_t *unspent_list);
+ * transaction_create - Creates a new transaction struct
+ * @sender: Private key of sender
+ * @receiver: Public key of receiver
+ * @amount: Amount to send
+ * @unspent_list: List of unspent transactions
+ * Return: NULL on failure, pointer to the new transaction otherwise
+ */
+transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver,
+									uint32_t amount, llist_t *all_unspent);
 
 /**
 * create_outputs - Creates transaction outputs
