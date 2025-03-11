@@ -242,5 +242,5 @@ int sign_transaction_input(llist_node_t input_tx, unsigned int index, void *tx_c
  * @receiver_key: Public key of the receiver
  * Return: 0 on failure, 1 on success
  */
-int process_transaction_output(uint32_t amount, tx_context_t *tx_context, EC_KEY const *receiver_key);
+int process_transaction_output(uint32_t amount, tc_t *tx_context, EC_KEY const *receiver_key);
 #endif
