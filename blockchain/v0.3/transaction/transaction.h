@@ -279,4 +279,13 @@ int match_unspent_output(uto_t *unspent, tx_in_t *in);
  */
 int accumulate_output_value(tx_out_t *out, unsigned int i, tv_t *context);
 
+/**
+ * coinbase_is_valid - Verifies the validity of a coinbase transaction
+ * @coinbase: The transaction to be checked
+ * @block_index: The index of the block to which the coinbase belongs
+ * Return: 1 if valid, 0 otherwise
+ */
+int coinbase_is_valid(
+    const transaction_t *coinbase, uint32_t block_index);
+
 #endif
