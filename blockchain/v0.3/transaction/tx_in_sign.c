@@ -22,7 +22,7 @@ sig_t *tx_in_sign(
 		return NULL;
 
 	/* Find the matching unspent transaction */
-	trans_out = llist_find_node(all_unspent, check_hash, in->trans_out_hash);
+	trans_out = llist_find_node(all_unspent, check_hash, in->tx_out_hash);
 	if (!trans_out)
 		return NULL;
 
