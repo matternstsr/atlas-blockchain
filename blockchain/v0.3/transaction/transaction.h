@@ -243,4 +243,40 @@ int sign_transaction_input(llist_node_t input_tx, unsigned int index, void *tx_c
  * Return: 0 on failure, 1 on success
  */
 int process_transaction_output(uint32_t amount, tc_t *tx_context, EC_KEY const *receiver_key);
+
+/**
+ * transaction_is_valid - Checks whether a transaction is valid
+ * @transaction: The transaction to be validated
+ * @unused_transactions: List of unspent transaction outputs
+ * Return: 1 if the transaction is valid, 0 if invalid
+ */
+int transaction_is_valid(
+    const transaction_t *transaction, llist_t *unused_transactions);
+
+/**
+ * validate_input_signature - Verifies the signature and checks for unspent outputs
+ * @in: Input transaction to validate
+ * @i: Iterator needed for llist functions (unused)
+ * @context: Structure holding the transaction and list of unspent outputs
+ * Return: 0 if valid, 1 if invalid
+ */
+int validate_input_signature(tx_in_t *in, uint32_t i, tv_t *context);
+
+/**
+ * match_unspent_output - Compares the hash of unspent outputs with the input transaction
+ * @unspent: Unspent transaction output
+ * @in: Input transaction to compare
+ * Return: 1 if the hashes match, 0 otherwise
+ */
+int match_unspent_output(uto_t *unspent, tx_in_t *in);
+
+/**
+ * accumulate_output_value - Calculates the total value of the transaction outputs
+ * @out: Output to check
+ * @i: Iterator needed for llist functions (unused)
+ * @context: Structure holding the transaction and unspent outputs
+ * Return: Always 0
+ */
+int accumulate_output_value(tx_out_t *out, unsigned int i, tv_t *context);
+
 #endif
