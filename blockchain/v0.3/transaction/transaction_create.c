@@ -1,25 +1,25 @@
 #include "transaction.h"
 
 /**
- * create_transaction - Initializes a new transaction
+ * transaction_create - Initializes a new transaction
  * @sender_key: Private key of the sender
  * @receiver_key: Public key of the receiver
  * @amount: The amount to transfer
  * @unused_transactions: List of unused transactions
  * Return: NULL if failed, otherwise pointer to the newly created transaction
  */
-transaction_t *create_transaction(
-	EC_KEY const *sender_key, EC_KEY const *receiver_key, uint32_t amount,
-	llist_t *unused_transactions)
+transaction_t *transaction_create(
+	EC_KEY const *sender, EC_KEY const *receiver, uint32_t amount,
+	llist_t *all_unspent)
 {
 	uint8_t sender_pub_key[EC_PUB_LEN];
 	transaction_t *new_transaction;
-	tx_context_t *tx_context;
+	tc_t *tx_context;
 
 	if (!sender_key || !receiver_key || !amount || !unused_transactions)
 		return (NULL);
 
-	tx_context = calloc(1, sizeof(tx_context_t));
+	tx_context = calloc(1, sizeof(tc_t));
 	new_transaction = calloc(1, sizeof(transaction_t));
 	if (!new_transaction)
 		return (NULL);
@@ -84,7 +84,7 @@ int match_transaction(llist_node_t unused_tx, unsigned int index, void *tx_conte
  * @receiver_key: Public key of the receiver
  * Return: 0 on failure, 1 on success
  */
-int process_transaction_output(uint32_t amount, tx_context_t *tx_context, EC_KEY const *receiver_key)
+int process_transaction_output(uint32_t amount, tc_t *tx_context, EC_KEY const *receiver_key)
 {
 	transaction_output_t *new_output, *change_output;
 	uint8_t receiver_pub_key[EC_PUB_LEN];
