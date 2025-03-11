@@ -148,16 +148,107 @@ typedef struct update_list_s
 sig_t *tx_in_sign(ti_t *in, uint8_t const tx_id[SHA256_DIGEST_LENGTH], EC_KEY const *sender, llist_t *all_unspent);
 ti_t *tx_in_create(const uto_t *unspent);
 uto_t *unspent_tx_out_create(uint8_t block_hash[SHA256_DIGEST_LENGTH], uint8_t tx_id[SHA256_DIGEST_LENGTH], const to_t *out);
-to_t *tx_out_create(uint32_t amount, uint8_t const pub[EC_PUB_LEN]);
-uint8_t *transaction_hash(transaction_t const *transaction, uint8_t hash_buf[SHA256_DIGEST_LENGTH]);
-int hash_in(llist_node_t input, unsigned int iter, void *buff);
-int hash_out(llist_node_t output, unsigned int iter, void *buff);
+
+/**
+ * transaction_create - creates a new transaction
+ * @sender: Sender's public key
+ * @receiver: Receiver's public key
+ * @amount: Amount to be transferred
+ * @all_unspent: List of all unspent transaction outputs
+ * Return: Pointer to the created transaction, or NULL on failure
+ */
 transaction_t *transaction_create(EC_KEY const *sender, EC_KEY const *receiver, uint32_t amount, llist_t *all_unspent);
+
+/**
+ * create_outputs - creates transaction outputs for a specific amount
+ * @amount: Amount to be included in the transaction output
+ * @context: Context containing transaction-related information
+ * @receiver: Receiver's public key
+ * Return: 1 on success, 0 on failure
+ */
 int create_outputs(uint32_t amount, tx_context_t *context, EC_KEY const *receiver);
+
+/**
+ * match_unspent_tx - matches unspent transaction outputs with required criteria
+ * @unspent: A node in the list of unspent transaction outputs
+ * @iter: Iterator needed for the llist functions
+ * @context: Context containing transaction-related information
+ * Return: 0 (always returns 0, as per current function implementation)
+ */
 int match_unspent_tx(llist_node_t unspent, unsigned int iter, void *context);
+
+/**
+ * sign_tx_inputs - signs the transaction inputs
+ * @tx_in: Transaction input list
+ * @iter: Iterator needed for the llist functions
+ * @context: Context holding information for signing
+ * Return: 0 on success, 1 on failure
+ */
 int sign_tx_inputs(llist_node_t tx_in, unsigned int iter, void *context);
+
+/**
+ * find_a_match - finds matching unspent transaction outputs
+ * @unspent: A node in the list of unspent transaction outputs
+ * @iter: Iterator needed for the llist functions
+ * @context: Context containing transaction-related information
+ * Return: 0 (always returns 0, as per current function implementation)
+ */
 int find_a_match(llist_node_t unspent, unsigned int iter, void *context);
+
+/**
+ * send_tx - sends the transaction to the network
+ * @amount: Amount to be sent in the transaction
+ * @context: Context holding information for transaction
+ * @receiver: Receiver's public key
+ * Return: 1 on success, 0 on failure
+ */
 int send_tx(uint32_t amount, tx_context_t *context, EC_KEY const *receiver);
+
+/**
+ * sign_txi - signs input transaction
+ * @tx_in: Transaction input list
+ * @iter: Iterator needed for the llist functions
+ * @context: Struct holding the necessary information
+ * Return: 0 on success, 1 on failure
+ */
 void sign_txi(llist_node_t tx_in, unsigned int iter, void *context);
+
+
+
+
+/**
+ * tx_out_create - creates a transaction output
+ * @amount: Amount of cryptocurrency in the output
+ * @pub: Receiver's public key
+ * Return: Pointer to the created transaction output, or NULL on failure
+ */
+to_t *tx_out_create(uint32_t amount, uint8_t const pub[EC_PUB_LEN]);
+
+/**
+ * transaction_hash - generates the hash of a transaction
+ * @transaction: The transaction whose hash is to be generated
+ * @hash_buf: Buffer to store the generated hash
+ * Return: Pointer to the hash buffer
+ */
+uint8_t *transaction_hash(transaction_t const *transaction, uint8_t hash_buf[SHA256_DIGEST_LENGTH]);
+
+/**
+ * hash_in - adds a node to the list of inputs for hashing
+ * @input: Input transaction node
+ * @iter: Iterator needed for the llist functions
+ * @buff: Buffer holding the generated hash
+ * Return: 0 on success
+ */
+int hash_in(llist_node_t input, unsigned int iter, void *buff);
+
+/**
+ * hash_out - adds a node to the list of outputs for hashing
+ * @output: Output transaction node
+ * @iter: Iterator needed for the llist functions
+ * @buff: Buffer holding the generated hash
+ * Return: 0 on success
+ */
+int hash_out(llist_node_t output, unsigned int iter, void *buff);
+
 
 #endif /* _TRANSACTION_H_ */
