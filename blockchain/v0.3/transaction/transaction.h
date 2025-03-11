@@ -127,7 +127,7 @@ typedef struct tx_valid_s
 	uint32_t   output;
 	uint8_t    tx_id[SHA256_DIGEST_LENGTH];
 	llist_t    *unspent;
-} tv_t;
+} tv_t, tc_t;
 
 /**
 * struct update_list_s - Holds information for updating the list of unspent outputs
