@@ -41,7 +41,7 @@ transaction_t *transaction_create(
 
 	/* Create inputs list and search for matching unspent transactions */
 	this_tx->inputs = llist_create(MT_SUPPORT_FALSE);
-	llist_for_each(unused_transactions, find_a_match, context);
+	llist_for_each(unused_transactions, match_transaction, context);
 
 	/* If the required amount is still not fulfilled, return NULL */
 	if (context->needed > 0)
