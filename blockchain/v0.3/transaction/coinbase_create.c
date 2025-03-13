@@ -24,30 +24,25 @@ transaction_t *coinbase_create(
 	/* Create lists for inputs and outputs */
 	new_cbtx->inputs = llist_create(MT_SUPPORT_FALSE);
 	new_cbtx->outputs = llist_create(MT_SUPPORT_FALSE);
-
 	/* Convert the receiver's public key */
 	ec_to_pub(receiver, pub);
-
 	/* Create the transaction output (coinbase) */
 	txo = tx_out_create(COINBASE_AMOUNT, pub);
-
 	/* Allocate memory for the transaction input (coinbase) */
 	txi = calloc(1, sizeof(ti_t));
-	if (!txi) {
+	if (!txi)
+	{
 		free(new_cbtx);
 		free(txo);
 		return (NULL);
 	}
 	/* Set the transaction input data */
 	memcpy(txi->tx_out_hash, &block_index, sizeof(uint32_t));
-
 	/* Add the input and output to the transaction */
 	llist_add_node(new_cbtx->inputs, txi, ADD_NODE_REAR);
 	llist_add_node(new_cbtx->outputs, txo, ADD_NODE_REAR);
-
 	/* Calculate the transaction hash */
 	transaction_hash(new_cbtx, new_cbtx->id);
-
 	/* Return the newly created coinbase transaction */
 	return (new_cbtx);
 }
