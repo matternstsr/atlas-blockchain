@@ -1,11 +1,11 @@
 #include "transaction.h"
 
 /**
- * coinbase_create - Creates a new coinbase transaction
- * @receiver: The public key of the receiver
- * @block_index: The index of the block to which the coinbase belongs
- * Return: A pointer to the new transaction, or NULL if creation fails
- */
+* coinbase_create - Creates a new coinbase transaction
+* @receiver: The public key of the receiver
+* @block_index: The index of the block to which the coinbase belongs
+* Return: A pointer to the new transaction, or NULL if creation fails
+*/
 transaction_t *coinbase_create(
     EC_KEY const *receiver, uint32_t block_index)
 {
