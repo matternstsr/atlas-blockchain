@@ -19,19 +19,19 @@ sig_t *tx_in_sign(
 
 	/* Validate input parameters */
 	if (!in || !tx_id || !sender || !unused_transactions)
-		return NULL;
+		return (NULL);
 
 	/* Find the matching unspent transaction */
 	trans_out = llist_find_node(unused_transactions, check_hash, in->tx_out_hash);
 	if (!trans_out)
-		return NULL;
+		return (NULL);
 
 	/* Convert the sender's private key to the corresponding public key */
 	ec_to_pub(sender, pub_key);
 
 	/* Verify the public key matches the unspent transaction output */
 	if (memcmp(pub_key, trans_out->out.pub, EC_PUB_LEN))
-		return NULL;
+		return (NULL);
 
 	/* Sign the transaction input */
 	ec_sign(sender, tx_id, SHA256_DIGEST_LENGTH, &in->sig);
