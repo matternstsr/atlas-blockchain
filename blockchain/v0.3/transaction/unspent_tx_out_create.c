@@ -13,17 +13,18 @@ uto_t *unspent_tx_out_create(
 {
 	/* Check for invalid input */
 	if (!block_hash || !tx_id || !out)
-		return NULL;
+		return (NULL);
 
 	/* Allocate memory for the new unspent transaction output struct */
 	uto_t *unspent_tx = calloc(1, sizeof(uto_t));
+
 	if (!unspent_tx)
-		return NULL;
+		return (NULL);
 
 	/* Initialize the unspent transaction struct with the provided data */
 	memcpy(unspent_tx->block_hash, block_hash, SHA256_DIGEST_LENGTH);
 	memcpy(unspent_tx->tx_id, tx_id, SHA256_DIGEST_LENGTH);
 	unspent_tx->out = *out;  /* Copy the transaction output */
 
-	return unspent_tx;
+	return (unspent_tx);
 }
