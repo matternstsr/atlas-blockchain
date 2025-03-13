@@ -1,7 +1,7 @@
 #include "transaction.h"
 
 /**
-* THIS WILL NOT ACTALY WORK - DUMMY EMPLIMENTATION
+* THIS WILL NOT ACTUALLY WORK - DUMMY IMPLEMENTATION
 * update_unspent - Updates the list of unspent transaction outputs (UTXOs)
 * @transactions: List of validated transactions
 * @block_hash: Hash of the block containing these transactions
@@ -9,20 +9,15 @@
 * Return: A new list of unspent transaction outputs
 */
 llist_t *update_unspent(llist_t *transactions,
-							uint8_t block_hash[SHA256_DIGEST_LENGTH],
-							llist_t *all_unspent)
+							uint8_t block_hash[SHA256_DIGEST_LENGTH] __attribute__((unused)),
+							llist_t *all_unspent __attribute__((unused)))
 {
 	/* make a new list for unspent outputs */
 	llist_t *new_unspent = llist_create(MT_SUPPORT_FALSE);
 
-	/* Loop thru the current unspent outputs and add them to the new list */
-	/* llist_for_each(all_unspent, (node_func_t)llist_add_node, new_unspent); */
+	/* Dummy implementation - loop through the transactions (but do nothing) */
+	llist_for_each(transactions, (node_func_t)NULL, NULL);
 
-	/* Loop thru each transaction in the given block (dummy implementation) */
-	llist_for_each(transactions, (node_func_t)NULL);
-
-	/* Clean up the old unspent list (dummy implementation) */
-	/* llist_destroy(all_unspent); */
-
+	/* Return the new unspent list */
 	return (new_unspent);
 }
