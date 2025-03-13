@@ -16,12 +16,12 @@ transaction_t *coinbase_create(
 
     /* Ensure receiver is not NULL */
     if (!receiver)
-        return NULL;
+        return (NULL);
 
     /* Allocate memory for the new transaction */
     new_cbtx = calloc(1, sizeof(transaction_t));
     if (!new_cbtx)
-        return NULL;
+        return (NULL);
 
     /* Create lists for inputs and outputs */
     new_cbtx->inputs = llist_create(MT_SUPPORT_FALSE);
@@ -38,7 +38,7 @@ transaction_t *coinbase_create(
     if (!txi) {
         free(new_cbtx);
         free(txo);
-        return NULL;
+        return (NULL);
     }
 
     /* Set the transaction input data */
@@ -52,5 +52,5 @@ transaction_t *coinbase_create(
     transaction_hash(new_cbtx, new_cbtx->id);
 
     /* Return the newly created coinbase transaction */
-    return new_cbtx;
+    return (new_cbtx);
 }
