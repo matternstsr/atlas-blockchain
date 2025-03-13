@@ -1,4 +1,4 @@
-#include "blockchain.h"
+#include "transaction.h"
 
 /**
 * update_unspent - Updates the list of unspent transaction outputs (UTXOs)
