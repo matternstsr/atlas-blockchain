@@ -118,4 +118,3 @@ int match_unspent_output(uto_t *unspent, tx_in_t *in)
     }
     return 0;  /* Return 0 if any of the hashes don't match */
 }
-
