@@ -17,12 +17,10 @@ transaction_t *coinbase_create(
 	/* Ensure receiver is not NULL */
 	if (!receiver)
 		return (NULL);
-
 	/* Allocate memory for the new transaction */
 	new_cbtx = calloc(1, sizeof(transaction_t));
 	if (!new_cbtx)
 		return (NULL);
-
 	/* Create lists for inputs and outputs */
 	new_cbtx->inputs = llist_create(MT_SUPPORT_FALSE);
 	new_cbtx->outputs = llist_create(MT_SUPPORT_FALSE);
@@ -40,7 +38,6 @@ transaction_t *coinbase_create(
 		free(txo);
 		return (NULL);
 	}
-
 	/* Set the transaction input data */
 	memcpy(txi->tx_out_hash, &block_index, sizeof(uint32_t));
 
