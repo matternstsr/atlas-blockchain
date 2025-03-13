@@ -17,7 +17,7 @@ uint8_t *transaction_hash(
 
 	/* Validate the input parameters */
 	if (!transaction || !hash_buf)
-		return NULL;
+		return (NULL);
 
 	/* Get the number of inputs and outputs in the transaction */
 	ins = llist_size(transaction->inputs);
@@ -26,7 +26,7 @@ uint8_t *transaction_hash(
 	/* Allocate a buffer to hold the combined transaction data */
 	buff = calloc(1, BUFF_SIZE);
 	if (!buff)
-		return NULL;
+		return (NULL);
 
 	/* Hash the transaction inputs and outputs */
 	llist_for_each(transaction->inputs, hash_in, buff);
