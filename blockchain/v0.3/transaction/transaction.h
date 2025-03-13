@@ -140,6 +140,19 @@ typedef struct update_list_s
 /* Prototypes */
 
 /**
+* update_unspent - Updates the list of unspent transaction outputs (UTXOs)
+*
+* @transactions: List of validated transactions
+* @block_hash: Hash of the block containing these transactions
+* @all_unspent: Current list of all unspent transaction outputs
+* Return: A new list of unspent transaction outputs
+*/
+llist_t *update_unspent(llist_t *transactions,
+							uint8_t block_hash[SHA256_DIGEST_LENGTH],
+							llist_t *all_unspent);
+
+
+/**
  * tx_in_sign - Signs a transaction input after verifying key
  * @in: Transaction input
  * @tx_id: hash of transaction holding tx_input
