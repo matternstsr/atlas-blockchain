@@ -21,11 +21,11 @@ llist_t *update_unspent(llist_t *transactions,
 	/* uint8_t *spent_tx_id = NULL; */
 
 	/* Loop thru the current unspent outputs and add them to the new list */
-	/* llist_for_each(all_unspent, (node_func_t)llist_add_node, new_unspent); */
+	llist_for_each(all_unspent, (node_func_t)llist_add_node, new_unspent);
 
 	/* Loop thru each trans in the given block */
-/* 	llist_for_each(transactions, (node_func_t)transaction)
-	{
+	llist_for_each(transactions, (node_func_t)transaction)
+/* 	{
 		for (unsigned int i = 0; i < transaction->input_count; i++)
 		{
 			spent_tx_id = transaction->inputs[i].tx_id;
