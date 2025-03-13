@@ -28,11 +28,13 @@ int transaction_is_valid(
 		return (0);
 
 	/* Verify the validity of each input transaction */
-	if (llist_for_each(transaction->inputs, (node_func_t)&validate_input_signature, &context))
+	if (llist_for_each(transaction->inputs,
+		(node_func_t)&validate_input_signature, &context))
 		return (0);
 
 	/* Accumulate the total amount from the transaction outputs */
-	llist_for_each(transaction->outputs, (node_func_t)&accumulate_output_value, &context);
+	llist_for_each(transaction->outputs,
+					(node_func_t)&accumulate_output_value, &context);
 
 	/* Ensure that the total inputs equal total outputs */
 	if (context.input != context.output)
@@ -43,7 +45,7 @@ int transaction_is_valid(
 }
 
 /**
-* validate_input_signature - Verifies the signature and checks for unspent outputs
+* validate_input_signature - Ver the signature and checks for unspent outputs
 * @in: Input transaction to validate
 * @i: Iterator needed for llist functions (unused)
 * @context: Structure holding the transaction and list of unspent outputs
@@ -58,7 +60,7 @@ int validate_input_signature(tx_in_t *in, uint32_t i, tv_t *context)
 	/* Look for a matching unspent transaction output */
 	match_found = llist_find_node(context->unspent,
 		(node_ident_t)&match_unspent_output, in);
-	
+
 	/* Return 1 if no matching output is found */
 	if (!match_found)
 		return (1);
@@ -86,7 +88,7 @@ int validate_input_signature(tx_in_t *in, uint32_t i, tv_t *context)
 }
 
 /**
-* accumulate_output_value - Calculates the total value of the transaction outputs
+* accumulate_output_value - Calc the total value of the transaction outputs
 * @out: Output to check
 * @i: Iterator needed for llist functions (unused)
 * @context: Structure holding the transaction and unspent outputs
@@ -102,7 +104,7 @@ int accumulate_output_value(tx_out_t *out, unsigned int i, tv_t *context)
 }
 
 /**
-* match_unspent_output - Compares the hash of unspent outputs with the input transaction
+* match_unspent_output - Comp the hash of unspent outputs with the input trans
 * @unspent: Unspent transaction output
 * @in: Input transaction to compare
 * Return: 1 if the hashes match, 0 otherwise
